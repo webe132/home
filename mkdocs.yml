@@ -1,0 +1,5 @@
+site_name: Правила Клана
+theme: material
+nav:
+  - Главная: index.md
+  - Устав: rules.md
