@@ -1,19 +1,12 @@
 site_name: Arasaka
 theme:
   name: material
-  logo: assets/asa-logo-480.png    # Твой логотип в шапке
-  favicon: assets/asa-logo-480.png # Иконка во вкладке браузера
-  language: ru             # Чтобы поиск и кнопки были на русском
-  features:
-    - navigation.sections  # Структура как в GitBook
-    - search.highlight     # Подсветка текста при поиске
+  logo: assets/asa-logo-480.png    # Добавил эту строку
+  favicon: assets/asa-logo-480.png # И эту (для иконки вкладки)
   palette: 
-    scheme: slate          # Темная тема
-    primary: black         # Черная шапка
-    accent: red            # Красные акценты (под стиль Arasaka)
-
-extra:
-  generator: false         # Убирает надпись "Made with MkDocs" внизу
+    scheme: slate
+    primary: black
+    accent: red  # Сделал красные акценты под стиль Арасаки
 
 nav:
   - Главная: index.md
