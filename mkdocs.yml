@@ -1,8 +1,8 @@
 site_name: Arasaka
 theme:
   name: material
-  logo: assets/logo.png    # Твой логотип в шапке
-  favicon: assets/logo.png # Иконка во вкладке браузера
+  logo: assets/asa-logo-480.png    # Твой логотип в шапке
+  favicon: assets/asa-logo-480.png # Иконка во вкладке браузера
   language: ru             # Чтобы поиск и кнопки были на русском
   features:
     - navigation.sections  # Структура как в GitBook
