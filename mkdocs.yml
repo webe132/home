@@ -1,11 +1,20 @@
 site_name: Arasaka
 theme:
   name: material
+  logo: assets/logo.png    # Твой логотип в шапке
+  favicon: assets/logo.png # Иконка во вкладке браузера
+  language: ru             # Чтобы поиск и кнопки были на русском
+  features:
+    - navigation.sections  # Структура как в GitBook
+    - search.highlight     # Подсветка текста при поиске
   palette: 
-    scheme: slate # Темная тема
-    primary: black
+    scheme: slate          # Темная тема
+    primary: black         # Черная шапка
+    accent: red            # Красные акценты (под стиль Arasaka)
+
+extra:
+  generator: false         # Убирает надпись "Made with MkDocs" внизу
 
 nav:
   - Главная: index.md
   - Правила: rules.md
-
