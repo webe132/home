@@ -1,6 +1,6 @@
 site_name: Arasaka
 theme:
-  name: readthedocs
+  name: material
   logo: assets/asa-logo-480.png    # Добавил эту строку
   favicon: assets/asa-logo-480.png # И эту (для иконки вкладки)
   palette: 
