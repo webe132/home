@@ -1,14 +1,25 @@
-/* Цвет фона основной области с текстом */
+/* 1. Цвет основной области с текстом (твой первый цвет #121212) */
 [data-md-color-scheme="slate"] .md-content {
-    background-color: #121212; 
+    background-color: #121212;
 }
-
-/* Цвет фона всей страницы (чтобы не было стыков) */
 [data-md-color-scheme="slate"] .md-main {
     background-color: #121212;
 }
 
-/* Чтобы текст оставался читаемым на таком фоне */
-[data-md-color-scheme="slate"] {
-    --md-default-fg-color: #e0e0e0;
+/* 2. Цвет шапки и боковых панелей (твой второй цвет #212121) */
+[data-md-color-scheme="slate"] .md-header {
+    background-color: #212121;
+}
+[data-md-color-scheme="slate"] .md-sidebar {
+    background-color: #212121;
+}
+
+/* 3. Цвет футера (нижней части) */
+[data-md-color-scheme="slate"] .md-footer {
+    background-color: #212121;
+}
+
+/* 4. Убираем белую рамку/тень между ними для чистого вида */
+.md-header {
+    box-shadow: none !important;
 }
