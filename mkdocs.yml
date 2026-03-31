@@ -20,6 +20,7 @@ extra:
 
 nav:
   - Главная: index.md
-  - Правила: rules.md
-  - Роли: roles.md
-  - ARC: arc.md
+  - Вики:
+      - Правила: rules.md
+      - Роли: roles.md
+      - ARC: arc.md
