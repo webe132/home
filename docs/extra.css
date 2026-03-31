@@ -1,0 +1,14 @@
+/* Цвет фона основной области с текстом */
+[data-md-color-scheme="slate"] .md-content {
+    background-color: #121212; 
+}
+
+/* Цвет фона всей страницы (чтобы не было стыков) */
+[data-md-color-scheme="slate"] .md-main {
+    background-color: #121212;
+}
+
+/* Чтобы текст оставался читаемым на таком фоне */
+[data-md-color-scheme="slate"] {
+    --md-default-fg-color: #e0e0e0;
+}
