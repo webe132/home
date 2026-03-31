@@ -5,8 +5,9 @@ theme:
   favicon: assets/asa-logo-480.png
   language: ru
   features:
-    - navigation.tabs      # <--- Это добавит вкладки сверху
-    - navigation.sections  # Сделает боковое меню красивее
+    - navigation.tabs
+    - navigation.sections
+    - content.tabs.link
   palette: 
     scheme: slate
     primary: black
