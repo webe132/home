@@ -112,9 +112,10 @@
 .md-sidebar--secondary .md-nav__link--active {
     background-color: rgba(16, 185, 129, 0.1) !important;
     color: #10B981 !important;
-    border-left: 2px solid #10B981;
-    border-radius: 0 4px 4px 0;
+    border-left: none !important; /* Убираем палку слева, чтобы прямоугольник был ровным */
+    border-radius: 4px !important; /* Скругляем все 4 угла */
     padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
 }
 
 .md-sidebar--secondary .md-nav__link {
