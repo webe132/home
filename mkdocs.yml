@@ -1,15 +1,25 @@
 site_name: Arasaka
 theme:
   name: material
-  logo: assets/asa-logo-480.png    # Добавил эту строку
-  favicon: assets/asa-logo-480.png # И эту (для иконки вкладки)
+  logo: assets/asa-logo-480.png
+  favicon: assets/asa-logo-480.png
+  language: ru
+  features:
+    - navigation.tabs      # <--- Это добавит вкладки сверху
+    - navigation.sections  # Сделает боковое меню красивее
   palette: 
     scheme: slate
     primary: black
-    accent: red  # Сделал красные акценты под стиль Арасаки
+    accent: red
+
+extra_css:
+  - extra.css
+
+extra:
+  generator: false
 
 nav:
   - Главная: index.md
   - Правила: rules.md
-extra_css:
-  - extra.css
+  - Роли: roles.md
+  - ARC: arc.md
