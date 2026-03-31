@@ -1,72 +1,77 @@
-/* --- СХЕМА ЦВЕТОВ --- */
+/* --- ЦВЕТОВАЯ СХЕМА PEPELAND --- */
 [data-md-color-scheme="slate"] {
-    --md-default-bg-color:        #121214; /* Цвет со скрина */
+    --md-default-bg-color:        #121214; /* Фон как на скрине */
     --md-default-bg-color--light: #121214;
-    --md-default-fg-color:        #D2D2D2;
-    --md-typeset-color:           #D2D2D2;
-    --md-primary-fg-color:        #1b1b1d; 
+    
+    /* Цвет основного текста */
+    --md-default-fg-color:        #9CA3AF; 
+    --md-default-fg-color--light: #6B7280;
+    --md-typeset-color:           #9CA3AF;
+
+    /* Акцентный цвет (бирюзовый как на PepeLand) */
+    --md-accent-fg-color:         #10B981;
+    --md-primary-fg-color:        #1b1b1d;
 }
 
-/* --- ТЕКСТ И ШРИФТЫ --- */
+/* --- ТЕКСТ И РАЗМЕРЫ --- */
 :root {
-    --md-text-font-size: 0.72rem; /* Сделал еще чуть меньше для компактности */
+    --md-text-font-size: 0.72rem;
 }
 
 .md-typeset {
     font-size: 0.72rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    color: #9CA3AF;
 }
 
-.md-typeset h1 { font-size: 1.25rem; font-weight: 700; color: #FFFFFF; }
-.md-typeset h2 { font-size: 1.05rem; font-weight: 700; color: #FFFFFF; }
+/* Заголовки: чисто белые и жирные */
+.md-typeset h1, .md-typeset h2, .md-typeset h3 {
+    color: #FFFFFF !important;
+    font-weight: 700;
+}
 
-/* --- ТОТАЛЬНОЕ УДАЛЕНИЕ ФЕЙДА (МАСКИ) --- */
+.md-typeset h1 { font-size: 1.3rem; margin-bottom: 1.5rem; }
+.md-typeset h2 { font-size: 1.1rem; }
+
+/* Ссылки внутри текста */
+.md-typeset a {
+    color: #10B981 !important;
+    text-decoration: none;
+}
+
+/* --- УДАЛЕНИЕ ПРЯМОУГОЛЬНИКОВ И ФЕЙДА --- */
+
+/* Скрываем подложки сайдбаров нахуй */
+.md-sidebar, 
+.md-sidebar__inner, 
+.md-nav {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Тотальное убийство маски (фейда) */
 .md-sidebar__inner, 
 .md-nav, 
-.md-nav__list,
+.md-nav__list, 
 .md-nav__item {
     mask-image: none !important;
     -webkit-mask-image: none !important;
 }
 
-/* Убираем градиентные тени, которые тема ставит сверху и снизу меню */
-.md-nav--integrated .md-nav__list, 
-.md-sidebar__inner {
-    box-shadow: none !important;
-}
-
-/* --- ФИКС ПРЯМОУГОЛЬНИКОВ (САЙДБАРОВ) --- */
-
-/* Левый и правый блоки теперь имеют четкий фон без вылетов */
-[data-md-color-scheme="slate"] .md-sidebar--primary, 
-[data-md-color-scheme="slate"] .md-sidebar--secondary {
-    background-color: #1b1b1d !important;
-}
-
-/* Растягиваем внутреннюю часть, чтобы фон не обрывался */
-.md-sidebar__inner {
-    background-color: #1b1b1d !important;
-    margin: 0 !important;
-    padding: 0.5rem;
-}
-
-/* Центрируем основной контент и убираем лишние зазоры между ним и сайдбарами */
-.md-content {
-    max-width: 100% !important;
-}
-
-/* --- ШАПКА И ВКЛАДКИ --- */
+/* --- ШАПКА --- */
 .md-header {
+    background-color: #121214 !important;
     box-shadow: none !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background-color: #1b1b1d !important;
 }
 
-.md-tabs {
-    background-color: #1b1b1d !important;
-}
-
-/* Убираем полоску под активной вкладкой */
+/* Активная вкладка в навигации */
 .md-tabs__link--active {
-    border-bottom: none !important;
+    color: #10B981 !important;
+}
+
+/* Чтобы контент не жался к краям без сайдбаров */
+.md-content__inner {
+    margin-top: 1.5rem;
 }
