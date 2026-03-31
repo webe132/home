@@ -1,14 +1,17 @@
-site_name: Arasaka
-theme:
-  name: material
-  logo: assets/asa-logo-480.png
-  favicon: assets/asa-logo-480.png
-  language: ru
-  palette: 
-    scheme: slate
-    primary: black
-    accent: red
-
-nav:
-  - Главная: index.md
-  - Правила: rules.md
+name: publish
+on:
+  push:
+    branches:
+      - main  # или master, смотря какая у тебя главная ветка
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - run: pip install mkdocs-material 
+      - run: mkdocs gh-deploy --force
