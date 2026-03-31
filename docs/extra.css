@@ -1,59 +1,73 @@
-/* ИСПРАВЛЕНИЕ БАГА С ФЕЙДОМ (затемнением) В МЕНЮ */
-
-/* Левое меню */
-[data-md-color-scheme="slate"] .md-sidebar--primary .md-nav {
-    background-color: transparent !important;
-}
-
-/* Правое меню (Содержание) */
-[data-md-color-scheme="slate"] .md-sidebar--secondary .md-nav {
-    background-color: transparent !important;
-}
-
-/* Принудительно убираем наложения, которые создают эффект фейда */
-.md-sidebar__inner {
-    background-color: transparent !important;
-}
+/* --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ЦВЕТОВ (SLATE) --- */
 [data-md-color-scheme="slate"] {
-    /* Фон основной области */
     --md-default-bg-color:        #161618; 
     --md-default-bg-color--light: #1b1b1d;
-
-    /* Цвета текста */
     --md-default-fg-color:        #D2D2D2;
-    --md-default-fg-color--light: #A0A0A0; /* Для второстепенного текста */
+    --md-default-fg-color--light: #A0A0A0;
     --md-typeset-color:           #D2D2D2;
-
-    /* Цвет шапки и боковых панелей (чуть светлее для объема, как в оригинале) */
     --md-primary-fg-color:        #1b1b1d; 
     --md-primary-fg-color--dark:  #121212;
 }
 
-/* Настройка шрифтов для заголовоков */
+/* --- ШРИФТЫ И РАЗМЕРЫ ТЕКСТА --- */
+:root {
+    --md-text-font-size: 0.75rem; /* Компактный шрифт */
+}
+
+.md-typeset {
+    font-size: 0.75rem;
+    line-height: 1.6;
+}
+
+/* Настройка заголовков (без смайлов, жирные) */
 [data-md-color-scheme="slate"] .md-typeset h1, 
 [data-md-color-scheme="slate"] .md-typeset h2, 
 [data-md-color-scheme="slate"] .md-typeset h3 {
-    color: #FFFFFF; /* Заголовки лучше делать чуть ярче основного текста */
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
-/* Убираем лишние тени и границы для минимализма */
+.md-typeset h1 { font-size: 1.3rem; }
+.md-typeset h2 { font-size: 1.1rem; }
+
+/* --- ИСПРАВЛЕНИЕ ФЕЙДА И БОКОВЫХ ПАНЕЛЕЙ --- */
+
+/* Полностью отключаем маски затухания (фейд) */
+.md-sidebar__inner, 
+.md-nav {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    background-color: transparent !important;
+}
+
+/* Растягиваем прямоугольники боковых меню на всю высоту */
+[data-md-color-scheme="slate"] .md-sidebar {
+    background-color: #1b1b1d !important;
+    height: 100%;
+}
+
+/* Убираем тени и лишние отступы */
 .md-header {
     box-shadow: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Тонкая линия вместо тени */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Исправляем фон сайдбаров и контента напрямую, если переменные не подцепились */
-[data-md-color-scheme="slate"] .md-header,
-[data-md-color-scheme="slate"] .md-sidebar,
-[data-md-color-scheme="slate"] .md-footer {
+.md-sidebar--primary, 
+.md-sidebar--secondary {
     background-color: #1b1b1d !important;
 }
 
+/* Фикс для контента и вкладок */
 [data-md-color-scheme="slate"] .md-content {
     background-color: #161618 !important;
 }
 
-/* Убираем жирную черную полосу под вкладками навигации */
-.md-tabs {
+.md-tabs, .md-footer {
     background-color: #1b1b1d !important;
+    box-shadow: none !important;
+}
+
+/* Убираем жирную линию под активной вкладкой */
+.md-tabs__link--active {
+    color: #D2D2D2 !important;
 }
