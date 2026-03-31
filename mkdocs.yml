@@ -21,6 +21,8 @@ extra:
 nav:
   - Главная: index.md
   - Вики:
-      - Правила: rules.md
+      - Правила:
+          - Discord: rules/discord.md
+          - Клан: rules/clan.md
       - Роли: roles.md
       - ARC: arc.md
