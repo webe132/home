@@ -1,0 +1,148 @@
+[data-md-color-scheme="slate"] {
+    --md-default-bg-color:        #121214 !important; 
+    --md-default-bg-color--light: #121214 !important;
+    --md-default-fg-color:        #9CA3AF; 
+    --md-default-fg-color--light: #6B7280;
+    --md-typeset-color:           #9CA3AF;
+    --md-accent-fg-color:         #B43535;
+    --md-primary-fg-color:        #121214 !important;
+}
+
+:root {
+    --md-text-font-size: 0.72rem;
+}
+
+.md-typeset {
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: #9CA3AF;
+}
+
+.md-typeset h1, .md-typeset h2, .md-typeset h3 {
+    color: #FFFFFF !important;
+    font-weight: 700;
+}
+
+.md-typeset h1 { font-size: 1.3rem; margin-bottom: 1.5rem; }
+.md-typeset h2 { font-size: 1.1rem; }
+
+.md-typeset a {
+    color: #B43535 !important;
+    text-decoration: none;
+}
+
+.md-sidebar, 
+.md-sidebar__inner, 
+.md-nav,
+.md-nav__list,
+.md-nav__item,
+.md-nav__link {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    outline: none !important;
+}
+
+.md-nav__title::after,
+.md-nav__item::after,
+.md-nav__link::after,
+.md-sidebar__inner::after {
+    display: none !important;
+    content: none !important;
+}
+
+.md-header {
+    background-color: #121214 !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.md-tabs {
+    background-color: #121214 !important;
+}
+
+.md-tabs__link--active {
+    color: #B43535 !important;
+}
+
+.md-footer {
+    display: none !important;
+}
+
+.md-content {
+    background-color: transparent !important;
+}
+
+.md-content__inner {
+    margin-top: 1.5rem;
+}
+
+.md-nav__link--active {
+    color: #B43535 !important;
+    font-weight: 700;
+}
+
+.template-index .md-sidebar,
+[data-md-main-steps] .md-sidebar {
+    display: none !important;
+}
+
+.template-index .md-content {
+    max-width: 100% !important;
+    margin: 0 auto;
+}
+
+/* ОГРАНИЧИВАЕМ КАСТОМНЫЕ СТИЛИ МЕНЮ ТОЛЬКО ДЛЯ ПК */
+@media screen and (min-width: 76.25em) {
+    .md-sidebar--primary .md-nav__title[for="__drawer"] {
+        font-size: 0;
+    }
+
+    .md-sidebar--primary .md-nav__title[for="__drawer"]::before {
+        content: "Правила";
+        font-size: 0.8rem;
+        color: #FFFFFF;
+        font-weight: 700;
+    }
+
+    .md-sidebar--secondary .md-nav__title {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .md-sidebar--secondary .md-nav__link--active {
+        background-color: rgba(125, 37, 37, 0.1) !important;
+        color: #B43535 !important;
+        border-left: none !important; 
+        border-radius: 4px !important; 
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+
+/* ФИКС ДЛЯ МОБИЛОК (Сброс наложений) */
+@media screen and (max-width: 76.24em) {
+    .md-sidebar--primary .md-nav__title[for="__drawer"] {
+        font-size: 1rem !important; 
+        line-height: normal !important;
+    }
+    
+    .md-sidebar--primary .md-nav__title[for="__drawer"]::before {
+        content: "" !important; 
+    }
+}
+
+.md-sidebar--secondary .md-nav__link {
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+}
+
+.md-sidebar--secondary .md-nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #FFFFFF;
+}
+
+.md-sidebar--secondary .md-nav__title {
+    margin-bottom: 1.2rem !important;
+}
