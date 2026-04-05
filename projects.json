@@ -2,11 +2,11 @@
   "projects": [
     {
       "id": 1,
-      "status": 1
+      "status": 2
     },
     {
       "id": 2,
-      "status": 1
+      "status": 2
     }
   ],
   "statuses": {
