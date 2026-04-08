@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Roadmap | Arasaka</title>
+    <style>
+        /* Базовые стили, адаптируй под свои цвета */
+        body { font-family: sans-serif; background: #121212; color: #eee; padding: 40px; }
+        
+        .roadmap-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        /* Полоса прогресса */
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background: #333;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%; /* Анимируется через JS */
+            background: #4CAF50; /* Тот самый зеленый */
+            transition: width 0.8s ease-out;
+        }
+
+        /* Список этапов */
+        .steps-list { display: grid; gap: 15px; }
+        .step-item {
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+        }
+        .step-item.completed { border-color: #4CAF50; background: #1e281e; }
+        
+        .status-icon { margin-right: 15px; font-weight: bold; }
+        .completed .status-icon { color: #4CAF50; }
+    </style>
+</head>
+<body>
+
+    <div class="roadmap-header">
+        <h1>Планы разработки</h1>
+        <span id="stat-text">0/0 выполнено</span>
+    </div>
+
+    <div class="progress-container">
+        <div id="progress-fill" class="progress-fill"></div>
+    </div>
+
+    <div id="steps-list" class="steps-list">
+        </div>
+
+    <script>
+        async function loadRoadmap() {
+            try {
+                const response = await fetch('roadmap.json');
+                const data = await response.json();
+                
+                const list = document.getElementById('steps-list');
+                const fill = document.getElementById('progress-fill');
+                const stat = document.getElementById('stat-text');
+
+                let completed = 0;
+
+                data.forEach(item => {
+                    if (item.done === 1) completed++;
+                    
+                    const div = document.createElement('div');
+                    div.className = `step-item ${item.done ? 'completed' : ''}`;
+                    div.innerHTML = `
+                        <div class="status-icon">${item.done ? '✓' : '○'}</div>
+                        <div class="step-title">${item.title}</div>
+                    `;
+                    list.appendChild(div);
+                });
+
+                // Считаем прогресс
+                const percent = (completed / data.length) * 100;
+                fill.style.width = percent + '%';
+                stat.innerText = `${completed} из ${data.length} выполнено (${Math.round(percent)}%)`;
+
+            } catch (e) {
+                console.error("Ошибка загрузки roadmap.json. Убедись, что файл существует.", e);
+            }
+        }
+
+        loadRoadmap();
+    </script>
+</body>
+</html>
