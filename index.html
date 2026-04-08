@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARASAKA</title>
+<link rel="icon" type="image/png" href="asa-logo-480.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Rubik:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #191919;
+    --bg-deep: #141414;
+    --red: #B43535;
+    --red-dim: #7a2424;
+    --red-bright: #d44040;
+    --white: #e8e8e0;
+    --gray: #888880;
+    --gray-dim: #444440;
+    --panel: #1e1e1e;
+    --border: #2e2e2e;
+    --border-red: rgba(180,53,53,0.35);
+    --radius: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-deep);
+    color: var(--white);
+    font-family: 'Rubik', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* scanline */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* grid bg */
+  .grid-bg {
+    position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(180,53,53,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(180,53,53,0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(20,20,20,0.93);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 56px;
+  }
+  .nav-logo {
+    font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700;
+    letter-spacing: 0; color: var(--white); text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo img { width: 30px; height: 30px; border-radius: 8px; }
+  .nav-logo .accent { color: var(--red); }
+  .nav-links { display: flex; gap: 2px; list-style: none; }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray); text-decoration: none;
+    padding: 6px 16px; border: 1px solid transparent;
+    border-radius: 8px; transition: all 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); border-color: var(--border); background: rgba(255,255,255,0.03); }
+  .nav-links a.active { color: var(--red); border-color: var(--border-red); }
+
+  /* HERO */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px 40px 100px; overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(180,53,53,0.1) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-corner {
+    position: absolute; width: 100px; height: 100px;
+    border-color: var(--red-dim); border-style: solid; opacity: 0.35;
+  }
+  .hero-corner.tl { top: 80px; left: 40px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+  .hero-corner.tr { top: 80px; right: 40px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+  .hero-corner.bl { bottom: 60px; left: 40px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+  .hero-corner.br { bottom: 60px; right: 40px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+  .hero-logo {
+    width: 100px; height: 100px; border-radius: 22px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.7s ease both;
+    box-shadow: 0 0 40px rgba(180,53,53,0.2);
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.25em; color: var(--red); text-transform: uppercase;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+    animation: fadeUp 0.7s 0.05s ease both;
+  }
+  .hero-tag::before, .hero-tag::after { content: ''; display: block; width: 28px; height: 1px; background: var(--red-dim); }
+
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(64px, 11vw, 130px);
+    font-weight: 700; letter-spacing: 0.06em;
+    line-height: 0.9; text-align: center; text-transform: uppercase;
+    color: var(--white); animation: fadeUp 0.7s 0.1s ease both;
+  }
+  .hero-title .red { color: var(--red); }
+
+  .hero-subtitle {
+    margin-top: 20px; font-size: 15px; font-weight: 300;
+    color: var(--gray); text-align: center;
+    max-width: 440px; font-family: 'Rubik', sans-serif; font-size: 15px; font-weight: 400;
+    animation: fadeUp 0.7s 0.15s ease both;
+  }
+  .hero-since {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; color: var(--gray-dim); text-transform: uppercase;
+    animation: fadeUp 0.7s 0.18s ease both;
+  }
+
+  .hero-stats {
+    display: flex; gap: 1px; margin-top: 40px;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+  .stat {
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 16px 28px; text-align: center; position: relative;
+  }
+  .stat:not(:last-child) { border-right: none; }
+  .stat:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .stat:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .stat::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--red); opacity: 0; transition: opacity 0.2s;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .stat:first-child::before { border-radius: var(--radius) 0 0 0; }
+  .stat:last-child::before { border-radius: 0 var(--radius) 0 0; }
+  .stat:hover::before { opacity: 1; }
+  .stat-value { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; color: var(--white); line-height: 1; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--gray); text-transform: uppercase; margin-top: 3px; }
+
+  .hero-cta {
+    display: flex; gap: 10px; margin-top: 36px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s 0.25s ease both;
+  }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+    padding: 11px 26px; border: 1px solid; border-radius: var(--radius);
+    transition: all 0.2s; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--red); border-color: var(--red); color: var(--white); }
+  .btn-primary:hover { background: var(--red-bright); border-color: var(--red-bright); }
+  .btn-secondary { background: transparent; border-color: var(--border); color: var(--gray); }
+  .btn-secondary:hover { border-color: var(--gray-dim); color: var(--white); background: rgba(255,255,255,0.03); }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; padding: 72px 40px; max-width: 1080px; margin: 0 auto; }
+
+  .section-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 40px; }
+  .section-index { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--red); letter-spacing: 0.1em; }
+  .section-title { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  .sep { max-width: 1080px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 1; }
+  .sep-line { height: 1px; background: var(--border); }
+  .sep-line::before { content: ''; position: absolute; left: 40px; top: 0; width: 64px; height: 1px; background: var(--red); }
+
+  /* ABOUT GRID */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
+  .about-card {
+    background: var(--bg); padding: 28px; position: relative; transition: background 0.2s;
+  }
+  .about-card:hover { background: var(--panel); }
+  .about-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    background: var(--red); opacity: 0; transition: opacity 0.2s;
+  }
+  .about-card:hover::before { opacity: 1; }
+  .card-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+  .card-title { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+  .card-text { font-size: 13px; color: var(--gray); line-height: 1.65; font-family: 'Rubik', sans-serif; }
+
+  /* QUICK LINKS */
+  .quick-links { display: flex; flex-direction: column; gap: 2px; }
+  .quick-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); text-decoration: none; color: var(--white);
+    font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 500;
+    letter-spacing: 0.04em; transition: all 0.2s; gap: 12px;
+  }
+  .quick-link:hover { background: #242424; border-color: #3a3a3a; }
+  .quick-link-left { display: flex; align-items: center; gap: 12px; }
+  .quick-link-icon { font-size: 18px; }
+  .quick-link-sub { font-family: 'Rubik', sans-serif; font-size: 12px; color: var(--gray); margin-top: 2px; font-weight: 400; }
+  .quick-link-arrow { color: var(--gray-dim); font-size: 16px; }
+
+  /* JOIN BLOCK */
+  .join-block {
+    background: var(--panel); border: 1px solid var(--border-red);
+    border-radius: var(--radius); padding: 32px 36px;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .join-title { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .join-desc { font-size: 13px; color: var(--gray); margin-top: 4px; font-family: 'Rubik', sans-serif; }
+  .join-btns { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+
+  /* STATUS BAR */
+  .status-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    background: var(--bg-deep); border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 20px;
+    padding: 5px 40px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.08em; color: var(--gray-dim);
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #3d9e3d;
+    display: inline-block; margin-right: 5px;
+    box-shadow: 0 0 5px #3d9e3d; animation: pulse 2s infinite;
+  }
+  .status-item { display: flex; align-items: center; gap: 3px; }
+  .status-sep { width: 1px; height: 10px; background: var(--border); }
+  .ticker { overflow: hidden; white-space: nowrap; flex: 1; }
+  .ticker-inner { display: inline-block; animation: ticker 32s linear infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+  @keyframes ticker { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1; border-top: 1px solid var(--border);
+    padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .footer-logo { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.18em; color: var(--gray); display: flex; align-items: center; gap: 8px; }
+  .footer-logo img { width: 22px; height: 22px; border-radius: 5px; opacity: 0.6; }
+  .footer-logo .accent { color: var(--red); }
+  .footer-links { display: flex; gap: 20px; list-style: none; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--gray-dim); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gray); }
+  .footer-copy { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-dim); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .nav-links { display: none; }
+    section { padding: 56px 16px; }
+    .hero { padding: 80px 16px 100px; }
+    .hero-corner { display: none; }
+    .hero-stats { flex-direction: column; gap: 1px; }
+    .stat { width: 200px; }
+    .stat:first-child { border-radius: var(--radius) var(--radius) 0 0; border-right: 1px solid var(--border); border-bottom: none; }
+    .stat:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+    .about-grid { grid-template-columns: 1fr; }
+    .join-block { flex-direction: column; }
+    footer { padding: 20px 16px; flex-direction: column; align-items: flex-start; }
+    .status-bar { padding: 5px 16px; }
+  }
+
+
+  /* PROJECTS */
+  .projects-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .project-card {
+    display: grid;
+    grid-template-columns: 280px 1fr;   /* desc narrow, image wide */
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-height: 220px;
+    transition: border-color 0.2s;
+  }
+  .project-card:hover { border-color: #3a3a3a; }
+
+  .project-body {
+    padding: 24px 26px;
+    display: flex; flex-direction: column;
+    justify-content: space-between; gap: 14px;
+  }
+  .project-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.12em; padding: 3px 9px;
+    border-radius: 5px; border: 1px solid;
+    margin-bottom: 10px;
+  }
+  .project-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--white); margin-bottom: 8px;
+  }
+  .project-desc {
+    font-family: 'Rubik', sans-serif;
+    font-size: 13px; color: var(--gray);
+    line-height: 1.65; flex: 1;
+  }
+
+  /* 16:9 image container */
+  .project-img {
+    position: relative; overflow: hidden;
+    background: var(--bg-deep);
+  }
+  .project-img::before {
+    content: '';
+    display: block;
+    padding-top: 56.25%; /* 16:9 */
+  }
+  .project-img img {
+    position: absolute;
+    inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    opacity: 0.8; transition: opacity 0.3s;
+  }
+  .project-card:hover .project-img img { opacity: 1; }
+
+  .project-img-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: repeating-linear-gradient(
+      45deg, var(--bg-deep) 0px, var(--bg-deep) 12px,
+      #1c1c1c 12px, #1c1c1c 24px
+    );
+    color: var(--gray-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  .project-loading {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-dim); font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .project-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .project-img { order: -1; }
+    .project-img::before { padding-top: 56.25%; }
+    .project-body { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <img src="asa-logo-480.png" alt="Arasaka">
+    ARA<span class="accent">SAKA</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Главная</a></li>
+    <li><a href="wiki.html">Вики</a></li>
+    <li><a href="https://discord.gg/gtfzB9xYpt" target="_blank">Discord</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-corner tl"></div>
+  <div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div>
+  <div class="hero-corner br"></div>
+
+  <img class="hero-logo" src="asa-logo-480.png" alt="Arasaka">
+  <div class="hero-tag">CLAN · DIVISION · UNIT</div>
+  <h1 class="hero-title">ARA<span class="red">SAKA</span></h1>
+  <p class="hero-since">Активен с 28.12.2020</p>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value">4+</div>
+      <div class="stat-label">Года активности</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">35+</div>
+      <div class="stat-label">Участников</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">ARC</div>
+      <div class="stat-label">Система наград</div>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="wiki.html#intro" class="btn btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Вики клана
+    </a>
+    <a href="https://discord.gg/gtfzB9xYpt" class="btn btn-secondary" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Discord
+    </a>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-index">01</span>
+    <h2 class="section-title">О клане</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-card">
+      <span class="card-icon">⬡</span>
+      <h3 class="card-title">История</h3>
+      <p class="card-text">Клан основан 28 декабря 2020 года и продолжает активную деятельность по сей день. За это время сложилась стабильная структура и культура.</p>
+    </div>
+    <div class="about-card">
+      <span class="card-icon">◈</span>
+      <h3 class="card-title">Структура</h3>
+      <p class="card-text">Чёткая иерархия ролей от Главы до новобранцев. Каждый участник знает свои права, обязанности и путь развития внутри клана.</p>
+    </div>
+    <div class="about-card">
+      <span class="card-icon">▣</span>
+      <h3 class="card-title">Система ARC</h3>
+      <p class="card-text">Внутренняя валюта за заслуги. Баллы начисляются за вклад в клан и обмениваются на реальные привилегии — от звёзд Telegram до артов на заказ.</p>
+    </div>
+    <div class="about-card">
+      <span class="card-icon">◼</span>
+      <h3 class="card-title">Discord-сервер</h3>
+      <p class="card-text">Основная площадка для общения, координации и новостей. Вступление через анкету в канале «Заявки» — ссылка на вступление ниже.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-index">02</span>
+    <h2 class="section-title">Проекты</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-list" id="projects-list">
+    <!-- Заполняется через JS из projects.json + N.md + N.png -->
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="links">
+  <div class="section-header reveal">
+    <span class="section-index">03</span>
+    <h2 class="section-title">Навигация</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="quick-links reveal">
+    <a class="quick-link" href="wiki.html#intro">
+      <div class="quick-link-left">
+        <span class="quick-link-icon">📋</span>
+        <div>
+          <div>Правила Discord</div>
+          <div class="quick-link-sub">Правила поведения на сервере клана</div>
+        </div>
+      </div>
+      <span class="quick-link-arrow">→</span>
+    </a>
+    <a class="quick-link" href="wiki.html#rules-clan">
+      <div class="quick-link-left">
+        <span class="quick-link-icon">🏯</span>
+        <div>
+          <div>Устав клана</div>
+          <div class="quick-link-sub">Внутренние правила, склад, постройки, фермы</div>
+        </div>
+      </div>
+      <span class="quick-link-arrow">→</span>
+    </a>
+    <a class="quick-link" href="wiki.html#roles">
+      <div class="quick-link-left">
+        <span class="quick-link-icon">🏷️</span>
+        <div>
+          <div>Роли и звания</div>
+          <div class="quick-link-sub">Иерархия и описание каждой роли</div>
+        </div>
+      </div>
+      <span class="quick-link-arrow">→</span>
+    </a>
+    <a class="quick-link" href="wiki.html#arc">
+      <div class="quick-link-left">
+        <span class="quick-link-icon">⭐</span>
+        <div>
+          <div>Система ARC</div>
+          <div class="quick-link-sub">Баллы за заслуги и список наград</div>
+        </div>
+      </div>
+      <span class="quick-link-arrow">→</span>
+    </a>
+    <a class="quick-link" href="wiki.html#roster">
+      <div class="quick-link-left">
+        <span class="quick-link-icon">👥</span>
+        <div>
+          <div>Состав клана</div>
+          <div class="quick-link-sub">Актуальный список всех участников</div>
+        </div>
+      </div>
+      <span class="quick-link-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="join">
+  <div class="section-header reveal">
+    <span class="section-index">04</span>
+    <h2 class="section-title">Вступление</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="join-block reveal">
+    <div>
+      <div class="join-title">Хочешь в клан?</div>
+      <div class="join-desc">Зайди на Discord-сервер и заполни анкету в канале <strong style="color:var(--white)">#заявки</strong>. Руководство рассмотрит её в ближайшее время.</div>
+    </div>
+    <div class="join-btns">
+      <a href="https://discord.gg/gtfzB9xYpt" class="btn btn-primary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Войти на Discord
+      </a>
+      <a href="https://discord.com/channels/1183110103923175454/1399396140990070914" class="btn btn-secondary" target="_blank">
+        Заявки →
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">
+    <img src="asa-logo-480.png" alt="Arasaka">
+    ARA<span class="accent">SAKA</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="wiki.html">Вики</a></li>
+    <li><a href="wiki.html#intro">Правила</a></li>
+    <li><a href="https://discord.gg/gtfzB9xYpt" target="_blank">Discord</a></li>
+  </ul>
+  <div class="footer-copy">© ARASAKA CLAN · С 28.12.2020</div>
+</footer>
+
+<div class="status-bar">
+  <div class="status-item"><span class="status-dot"></span>АКТИВЕН</div>
+  <div class="status-sep"></div>
+  <div class="status-item">35+ УЧАСТНИКОВ</div>
+  <div class="status-sep"></div>
+  <div class="ticker">
+    <span class="ticker-inner">
+      ◈ Добро пожаловать в клан Arasaka &nbsp;&nbsp;&nbsp; ◈ Для вступления заполни анкету в канале Заявки на Discord &nbsp;&nbsp;&nbsp; ◈ discord.gg/gtfzB9xYpt &nbsp;&nbsp;&nbsp; ◈ ARASAKA · С 28.12.2020 &nbsp;&nbsp;&nbsp; ◈ Слава Darkness &nbsp;&nbsp;&nbsp; ◈ беб. &nbsp;&nbsp;&nbsp; ◈ вебе раб маси &nbsp;&nbsp;&nbsp; ◈ спасибо _webe &nbsp;&nbsp;&nbsp;
+    </span>
+  </div>
+</div>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 60); });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+    navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + cur || (cur === '' && a.getAttribute('href') === 'index.html')); });
+  });
+
+  // ── Projects loader ──
+  async function loadProjects() {
+    const list = document.getElementById('projects-list');
+    if (!list) return;
+
+    let cfg;
+    try {
+      const r = await fetch('projects.json?' + Date.now());
+      cfg = await r.json();
+    } catch(e) {
+      list.innerHTML = '<p style="color:var(--gray-dim);padding:20px;font-family:JetBrains Mono,monospace;font-size:12px">Не удалось загрузить projects.json</p>';
+      return;
+    }
+
+    const statuses = cfg.statuses || {};
+
+    for (const proj of cfg.projects) {
+      const id = proj.id;
+      const statusKey = String(proj.status);
+      const statusInfo = statuses[statusKey] || { label: 'Неизвестно', color: '#888' };
+
+      // Card skeleton
+      const card = document.createElement('div');
+      card.className = 'project-card reveal';
+
+      // Left: body
+      const body = document.createElement('div');
+      body.className = 'project-body';
+
+      const tag = document.createElement('div');
+      tag.className = 'project-tag';
+      tag.textContent = statusInfo.label;
+      tag.style.color = statusInfo.color;
+      tag.style.borderColor = statusInfo.color + '55';
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'project-title';
+      titleEl.textContent = '...';
+
+      const descEl = document.createElement('p');
+      descEl.className = 'project-desc';
+      descEl.textContent = '...';
+
+      const linkEl = document.createElement('a');
+      linkEl.className = 'btn btn-secondary';
+      linkEl.textContent = 'Подробнее →';
+      linkEl.href = proj.link || '#';
+      if (proj.link) linkEl.target = '_blank';
+
+      body.appendChild(tag);
+      body.appendChild(titleEl);
+      body.appendChild(descEl);
+      body.appendChild(linkEl);
+
+      // Right: image (16:9)
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'project-img';
+
+      const imgLoader = document.createElement('div');
+      imgLoader.className = 'project-loading';
+      imgLoader.textContent = 'загрузка...';
+      imgWrap.appendChild(imgLoader);
+
+      card.appendChild(body);
+      card.appendChild(imgWrap);
+      list.appendChild(card);
+
+      // Load .md for title + description
+      fetch(id + '.md?' + Date.now())
+        .then(r => r.ok ? r.text() : null)
+        .then(md => {
+          if (!md) { titleEl.textContent = 'Проект ' + id; descEl.textContent = 'Описание не найдено. Добавьте файл ' + id + '.md'; return; }
+          const lines = md.trim().split('\n');
+          const titleLine = lines.find(l => l.startsWith('# '));
+          titleEl.textContent = titleLine ? titleLine.replace(/^# /, '') : 'Проект ' + id;
+          const descLines = lines.filter(l => l.trim() && !l.startsWith('#'));
+          descEl.textContent = descLines.slice(0, 3).join(' ').trim() || '—';
+        })
+        .catch(() => { titleEl.textContent = 'Проект ' + id; });
+
+      // Load image (try png, jpg, jpeg, webp)
+      const exts = ['png', 'jpg', 'jpeg', 'webp'];
+      let found = false;
+      for (const ext of exts) {
+        try {
+          const r = await fetch(id + '.' + ext, { method: 'HEAD' });
+          if (r.ok) {
+            const img = document.createElement('img');
+            img.src = id + '.' + ext;
+            img.alt = 'Проект ' + id;
+            img.onload = () => imgLoader.remove();
+            imgWrap.appendChild(img);
+            found = true;
+            break;
+          }
+        } catch(_) {}
+      }
+      if (!found) {
+        imgLoader.remove();
+        const ph = document.createElement('div');
+        ph.className = 'project-img-placeholder';
+        ph.textContent = 'Фото: добавьте ' + id + '.png';
+        imgWrap.appendChild(ph);
+      }
+
+      // Trigger reveal animation
+      requestAnimationFrame(() => {
+        setTimeout(() => card.classList.add('visible'), 100);
+      });
+    }
+  }
+
+  loadProjects();
+
+</script>
+</body>
+</html>
