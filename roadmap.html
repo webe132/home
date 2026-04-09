@@ -6,6 +6,8 @@
   <title>Роудмапа — ARASAKA</title>
   <link rel="icon" type="image/png" href="asa-logo-480.png" />
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
     /* ── RESET & BASE ───────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,7 +20,7 @@
       --text:      #e8e8e8;
       --muted:     #555555;
       --muted2:    #3a3a3a;
-      --accent:    #c8a96e;          /* gold — same as site */
+      --accent:    #c8a96e;
       --green:     #4caf6e;
       --green-dim: #1a3326;
       --green-glow:rgba(76,175,110,0.18);
@@ -97,30 +99,6 @@
 
     nav ul a:hover,
     nav ul a.active { color: var(--accent); }
-
-    /* ── TICKER ─────────────────────────────────────── */
-    .ticker-bar {
-      background: var(--bg2);
-      border-bottom: 1px solid var(--border);
-      overflow: hidden;
-      height: 28px;
-      display: flex;
-      align-items: center;
-    }
-
-    .ticker-inner {
-      white-space: nowrap;
-      display: inline-block;
-      animation: ticker 30s linear infinite;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-    }
-
-    @keyframes ticker {
-      from { transform: translateX(100vw); }
-      to   { transform: translateX(-100%); }
-    }
 
     /* ── PAGE WRAPPER ───────────────────────────────── */
     .page {
@@ -210,6 +188,8 @@
       font-size: 1.1rem;
       letter-spacing: 0.1em;
       color: var(--green);
+      /* мягкое свечение на цифре процента */
+      text-shadow: 0 0 12px rgba(76,175,110,0.55);
     }
 
     .progress-track {
@@ -217,7 +197,8 @@
       background: var(--bg3);
       border: 1px solid var(--border2);
       position: relative;
-      overflow: hidden;
+      overflow: visible; /* блюр не обрезаем */
+      border-radius: 3px;
     }
 
     .progress-fill {
@@ -225,22 +206,32 @@
       background: linear-gradient(90deg, #2d7a4e, var(--green));
       transition: width 1s cubic-bezier(.4,0,.2,1);
       position: relative;
+      border-radius: 3px;
+      /* свечение вокруг заполненной полосы */
+      box-shadow:
+        0 0 6px  rgba(76,175,110,0.5),
+        0 0 18px rgba(76,175,110,0.25),
+        0 0 40px rgba(76,175,110,0.10);
     }
 
+    /* блик-кончик на правом крае */
     .progress-fill::after {
       content: '';
       position: absolute;
       right: 0;
-      top: 0;
-      height: 100%;
-      width: 40px;
-      background: linear-gradient(90deg, transparent, rgba(76,175,110,0.6));
-      animation: pulse-end 1.5s ease-in-out infinite alternate;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 200%;
+      width: 3px;
+      background: rgba(180,255,210,0.85);
+      border-radius: 2px;
+      filter: blur(2px);
+      animation: pulse-tip 1.6s ease-in-out infinite alternate;
     }
 
-    @keyframes pulse-end {
-      from { opacity: 0.4; }
-      to   { opacity: 1; }
+    @keyframes pulse-tip {
+      from { opacity: 0.5; box-shadow: 0 0 4px rgba(76,175,110,0.4); }
+      to   { opacity: 1;   box-shadow: 0 0 12px rgba(76,175,110,0.9); }
     }
 
     /* ── SEGMENT TRACK ──────────────────────────────── */
@@ -254,12 +245,15 @@
       flex: 1;
       height: 3px;
       background: var(--border2);
+      border-radius: 2px;
       transition: background .4s, box-shadow .4s;
     }
 
     .seg.done {
       background: var(--green);
-      box-shadow: 0 0 6px var(--green-glow);
+      box-shadow:
+        0 0 4px  rgba(76,175,110,0.6),
+        0 0 10px rgba(76,175,110,0.25);
     }
 
     /* ── TIMELINE ───────────────────────────────────── */
@@ -285,6 +279,11 @@
       width: 100%;
       background: linear-gradient(to bottom, #2d7a4e, var(--green));
       transition: height 1.2s cubic-bezier(.4,0,.2,1);
+      /* свечение вдоль вертикальной линии */
+      box-shadow:
+        0 0 6px  rgba(76,175,110,0.5),
+        0 0 20px rgba(76,175,110,0.2);
+      border-radius: 1px;
     }
 
     /* ── STEP ───────────────────────────────────────── */
@@ -327,7 +326,9 @@
     .step-dot.done {
       border-color: var(--green);
       background: var(--green-dim);
-      box-shadow: 0 0 10px var(--green-glow);
+      box-shadow:
+        0 0 8px  rgba(76,175,110,0.55),
+        0 0 18px rgba(76,175,110,0.20);
     }
 
     .step-dot-inner {
@@ -338,6 +339,7 @@
 
     .step-dot.done .step-dot-inner {
       background: var(--green);
+      box-shadow: 0 0 4px rgba(76,175,110,0.8);
     }
 
     .step-body {
@@ -400,6 +402,8 @@
       color: var(--green);
       border-color: var(--green);
       background: rgba(76,175,110,0.08);
+      /* лёгкое свечение на бейдже */
+      box-shadow: 0 0 8px rgba(76,175,110,0.2);
     }
 
     .badge-wip {
@@ -412,14 +416,6 @@
       color: var(--muted);
       border-color: var(--muted2);
       background: transparent;
-    }
-
-    /* ── CONNECTOR LINE ─────────────────────────────── */
-    .connector {
-      position: absolute;
-      left: 20px;
-      width: 1px;
-      background: var(--border);
     }
 
     /* ── FOOTER ─────────────────────────────────────── */
@@ -458,6 +454,7 @@
       background: var(--green);
       border-radius: 50%;
       margin-right: 6px;
+      box-shadow: 0 0 6px rgba(76,175,110,0.7);
       animation: blink 2s ease-in-out infinite;
     }
 
@@ -465,9 +462,6 @@
       0%,100% { opacity: 1; }
       50%      { opacity: .3; }
     }
-
-    /* ── GOOGLE FONTS ───────────────────────────────── */
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
   </style>
 </head>
 <body>
@@ -486,10 +480,7 @@
   </ul>
 </nav>
 
-<!-- TICKER -->
-<div class="ticker-bar">
-  <span class="ticker-inner" id="ticker-text">◈ Загрузка роудмапы...</span>
-</div>
+<!-- TICKER УБРАН -->
 
 <!-- MAIN -->
 <main class="page">
@@ -531,7 +522,6 @@
     <div class="timeline-spine">
       <div class="timeline-spine-fill" id="spine-fill" style="height:0%"></div>
     </div>
-    <!-- steps injected by JS -->
   </div>
 
 </main>
@@ -550,7 +540,6 @@
   </div>
 </footer>
 
-<!-- LOAD DATA -->
 <script src="roadmap.js"></script>
 <script>
 (function () {
@@ -563,10 +552,9 @@
   const statTotal  = document.getElementById('stat-total');
   const segTrack   = document.getElementById('segments-track');
   const subtitle   = document.getElementById('subtitle');
-  const ticker     = document.getElementById('ticker-text');
 
   if (typeof ROADMAP === 'undefined' || !Array.isArray(ROADMAP)) {
-    timeline.innerHTML = '<p style="color:#555;padding:2rem">Не удалось загрузить roadmap.js</p>';
+    timeline.innerHTML += '<p style="color:#555;padding:2rem">Не удалось загрузить roadmap.js</p>';
     return;
   }
 
@@ -575,29 +563,19 @@
   const left  = total - done;
   const pct   = total === 0 ? 0 : Math.round((done / total) * 100);
 
-  // ── STATS
   statDone.textContent  = done;
   statLeft.textContent  = left;
   statTotal.textContent = total;
   subtitle.textContent  = `${done} из ${total} этапов завершено · ${left} остаётся`;
 
-  // ── SEGMENTS
+  // segments
   ROADMAP.forEach(s => {
     const seg = document.createElement('div');
     seg.className = 'seg' + (s.done ? ' done' : '');
     segTrack.appendChild(seg);
   });
 
-  // ── TICKER
-  const doneNames = ROADMAP.filter(s => s.done).map(s => s.name);
-  const tickerParts = doneNames.map(n => `◈ ✓ ${n}`);
-  const pendingNames = ROADMAP.filter(s => !s.done).map(s => s.name);
-  const pendingParts = pendingNames.map(n => `◈ ⬡ ${n}`);
-  ticker.textContent = [...tickerParts, ...pendingParts].join('     ') + '     ';
-
-  // ── TIMELINE STEPS
-  const spineNode = document.getElementById('timeline').querySelector('.timeline-spine');
-
+  // timeline steps
   ROADMAP.forEach((step, i) => {
     const isDone = step.done === 1;
 
@@ -629,12 +607,11 @@
     timeline.appendChild(wrapper);
   });
 
-  // ── ANIMATE PROGRESS (after paint)
+  // animate progress
   setTimeout(() => {
     progFill.style.width = pct + '%';
     pctLabel.textContent = pct + '%';
 
-    // spine fill = percentage of done steps * timeline height
     const lastDoneIndex = ROADMAP.map(s => s.done).lastIndexOf(1);
     if (lastDoneIndex >= 0) {
       const spinePct = total <= 1 ? 100 : Math.round(((lastDoneIndex + 0.5) / total) * 100);
