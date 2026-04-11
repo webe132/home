@@ -25,7 +25,7 @@
       {
         href: 'wiki.html#birthdays',
         icon: '🎂',
-        title: 'Дни рождений',
+        title: 'Дни рождения',
         sub: 'Команды бота · поздравления в Discord',
         badge: true
       }
