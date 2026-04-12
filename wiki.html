@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вики · Arasaka</title>
+<link rel="icon" type="image/png" href="asa-logo-480.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Rubik:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+:root {
+  --bg: #111111; --bg-deep: #0a0a0a; --red: #B43535; --red-dim: #7a2424;
+  --red-bright: #d44040; --white: #f2f2f0; --gray: #888880; --gray-dim: #444440;
+  --panel: #161616; --border: #222222; --border-red: rgba(180,53,53,0.35);
+  --sidebar-w: 230px; --toc-w: 196px; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg-deep); color: var(--white); font-family: 'Rubik', sans-serif; font-size: 15px; line-height: 1.65; }
+
+/* NAV — logo left, links center, empty right */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,10,0.95); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: center;
+  padding: 0 24px; height: 52px;
+}
+.nav-logo { display: flex; align-items: center; text-decoration: none; }
+.nav-logo img { width: 26px; height: 26px; border-radius: 7px; object-fit: contain; }
+
+.nav-links { display: flex; gap: 4px; list-style: none; justify-content: center; }
+.nav-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); text-decoration: none; padding: 5px 14px; border-radius: 8px; border: 1px solid transparent; transition: all 0.15s; }
+.nav-links a:hover { background: var(--panel); color: var(--white); }
+.nav-links a.active { color: var(--red); border-color: var(--border-red); }
+
+/* LAYOUT */
+.wiki-layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr var(--toc-w); min-height: calc(100vh - 52px); max-width: 1220px; margin: 0 auto; }
+
+/* SIDEBAR */
+.sidebar { border-right: 1px solid var(--border); padding: 18px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.sb-group { margin-bottom: 4px; }
+.sb-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-dim); padding: 10px 16px 4px; display: block; }
+.sb-links { list-style: none; }
+.sb-link { display: block; padding: 6px 16px; color: var(--gray); text-decoration: none; font-size: 14px; transition: background 0.12s, color 0.12s; position: relative; cursor: pointer; }
+.sb-link:hover { background: var(--panel); color: var(--white); }
+.sb-link.active { background: var(--panel); color: var(--white); }
+.sb-link.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--red); }
+.sb-badge { display: inline-block; margin-left: 7px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; background: var(--red-dim); color: var(--red-bright); border: 1px solid var(--red-dim); border-radius: 4px; padding: 1px 5px; vertical-align: middle; line-height: 1.4; }
+
+/* CONTENT */
+.wiki-content { padding: 36px 48px; min-width: 0; }
+.breadcrumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-dim); margin-bottom: 20px; display: flex; align-items: center; gap: 5px; letter-spacing: 0.05em; }
+.breadcrumb a { color: var(--gray-dim); text-decoration: none; }
+.breadcrumb a:hover { color: var(--gray); }
+
+/* MARKDOWN */
+.md-body h1 { font-family: 'Rubik', sans-serif; font-size: 28px; font-weight: 600; color: var(--white); padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.md-body h2 { font-family: 'Rubik', sans-serif; font-size: 20px; font-weight: 600; color: var(--white); margin: 28px 0 10px; scroll-margin-top: 72px; }
+.md-body h3 { font-family: 'Rubik', sans-serif; font-size: 17px; font-weight: 600; color: var(--white); margin: 18px 0 8px; scroll-margin-top: 72px; }
+.md-body p { color: var(--gray); margin-bottom: 12px; font-size: 16px; line-height: 1.75; }
+.md-body ul, .md-body ol { color: var(--gray); padding-left: 22px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 16px; line-height: 1.75; }
+.md-body li strong { color: var(--white); }
+.md-body a { color: var(--red); text-decoration: none; }
+.md-body a:hover { text-decoration: underline; }
+.md-body hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+.md-body code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: #1e1e1e; border: 1px solid var(--border); padding: 1px 6px; border-radius: 5px; color: var(--white); }
+.md-body strong { color: var(--white); }
+.md-body table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+.md-body th { background: var(--panel); color: var(--white); font-weight: 600; padding: 8px 14px; text-align: left; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.md-body td { padding: 7px 14px; border: 1px solid var(--border); color: var(--gray); }
+.md-body tr:hover td { background: rgba(255,255,255,0.015); }
+
+.loading { color: var(--gray-dim); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; padding: 40px 0; }
+
+.callout { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--red); border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 16px; margin: 16px 0; }
+.callout-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red); margin-bottom: 5px; }
+.callout p { margin: 0; font-size: 14px; color: var(--gray); }
+
+.link-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0; }
+.link-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); text-decoration: none; color: var(--white); font-size: 14px; transition: background 0.12s, border-color 0.12s; cursor: pointer; }
+.link-card:hover { background: #1c1c1c; border-color: #333333; }
+.link-card.new-card { border-color: var(--border-red); }
+.link-card span { color: var(--gray-dim); }
+
+.update-banner { background: linear-gradient(135deg, rgba(180,53,53,0.08), rgba(180,53,53,0.03)); border: 1px solid var(--border-red); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; }
+.update-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.update-text { flex: 1; }
+.update-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red); margin-bottom: 4px; }
+.update-desc { font-size: 13px; color: var(--gray); line-height: 1.55; }
+
+/* TOC */
+.toc { border-left: 1px solid var(--border); padding: 22px 0 22px 18px; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; }
+.toc::-webkit-scrollbar { width: 4px; }
+.toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.toc-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-dim); margin-bottom: 10px; }
+.toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.toc-list a { color: var(--gray-dim); text-decoration: none; display: block; padding: 3px 0; transition: color 0.12s; line-height: 1.4; font-size: 13px; }
+.toc-list a:hover { color: var(--gray); }
+.toc-list .toc-h3 { padding-left: 12px; font-size: 11px; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  padding: 1.5rem 2rem;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-logo { display: flex; align-items: center; gap: 8px; font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.15em; color: var(--gray); }
+.footer-logo img { width: 20px; height: 20px; border-radius: 5px; opacity: 0.6; }
+.footer-logo .accent { color: var(--red); }
+.footer-nav { display: flex; gap: 18px; list-style: none; }
+.footer-nav a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-dim); text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; transition: color 0.2s; }
+.footer-nav a:hover { color: var(--gray); }
+.footer-status { display: flex; gap: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--gray-dim); }
+/* зелёная точка в футере */
+.status-dot { display: inline-block; width: 6px; height: 6px; background: #3d9e3d; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 5px #3d9e3d; animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+@media (max-width: 960px) {
+  .wiki-layout { grid-template-columns: 1fr; }
+  .sidebar, .toc { display: none; }
+  .wiki-content { padding: 22px 16px; }
+  nav { grid-template-columns: 40px 1fr 40px; padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">
+    <img src="asa-logo-480.png" alt="Arasaka">
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="wiki.html" class="active">Вики</a></li>
+    <li><a href="roadmap.html">Роудмапа</a></li>
+    <li><a href="https://discord.gg/SpufupDBB4" target="_blank">Discord</a></li>
+  </ul>
+  <div></div>
+</nav>
+
+<div class="wiki-layout">
+<aside class="sidebar">
+  <div class="sb-group">
+    <span class="sb-label">Вики</span>
+    <ul class="sb-links">
+      <li><a class="sb-link" data-tab="intro">Введение</a></li>
+    </ul>
+  </div>
+  <div class="sb-group">
+    <span class="sb-label">Правила</span>
+    <ul class="sb-links">
+      <li><a class="sb-link" data-tab="rules-discord">Discord</a></li>
+      <li><a class="sb-link" data-tab="rules-clan">Клан</a></li>
+    </ul>
+  </div>
+  <div class="sb-group">
+    <span class="sb-label">Структура</span>
+    <ul class="sb-links">
+      <li><a class="sb-link" data-tab="roles">Роли</a></li>
+      <li><a class="sb-link" data-tab="arc">ARC</a></li>
+      <li><a class="sb-link" data-tab="roster">Состав</a></li>
+      <li><a class="sb-link" data-tab="join">Система вступления <span class="sb-badge">new</span></a></li>
+      <li><a class="sb-link" data-tab="birthdays">Дни рождения <span class="sb-badge">new</span></a></li>
+    </ul>
+  </div>
+</aside>
+
+<main class="wiki-content">
+
+  <!-- INTRO -->
+  <div class="tab-pane" id="tab-intro">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Введение</span></div>
+    <div class="md-body">
+      <h1>Введение</h1>
+      <div class="update-banner">
+        <div class="update-icon">🐯</div>
+        <div class="update-text">
+          <div class="update-label">Обновление клана</div>
+          <div class="update-desc">Новый маскот клана — <strong style="color:var(--white)">Белый тигр</strong>. Обновлено оформление Discord, переработана система ролей, добавлены новые разделы вики.</div>
+        </div>
+      </div>
+      <p>Добро пожаловать в вики клана Arasaka. Здесь собрана вся необходимая информация — правила, роли, система вступления, ARC и состав.</p>
+      <div class="callout">
+        <div class="callout-title">Впервые в клане?</div>
+        <p>Начните с правил Discord и устава клана. Затем ознакомьтесь с системой вступления и ролями.</p>
+      </div>
+      <h2>Навигация по вики</h2>
+      <div class="link-cards">
+        <div class="link-card" data-tab="rules-discord">📋 Правила Discord <span>→</span></div>
+        <div class="link-card" data-tab="rules-clan">🏯 Устав клана <span>→</span></div>
+        <div class="link-card new-card" data-tab="join">📝 Система вступления <span>→</span></div>
+        <div class="link-card new-card" data-tab="birthdays">🎂 Дни рождения <span>→</span></div>
+        <div class="link-card" data-tab="roles">🏷️ Роли и звания <span>→</span></div>
+        <div class="link-card" data-tab="arc">⭐ Система ARC <span>→</span></div>
+        <div class="link-card" data-tab="roster">👥 Состав клана <span>→</span></div>
+      </div>
+      <h2>О клане</h2>
+      <p>Arasaka — клан с организованной структурой, иерархией и системой поощрений. Маскот клана — Белый тигр. Основан 28 декабря 2020 года.</p>
+      <p>Вступление — через Discord-сервер. После подачи заявки проходит голосование Совета, затем испытательный срок от 7 до 14 дней.</p>
+      <p><a href="https://discord.gg/SpufupDBB4" target="_blank">→ Войти на Discord</a></p>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-rules-discord">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Правила Discord</span></div>
+    <div class="md-body loading" id="content-rules-discord">Загрузка...</div>
+  </div>
+
+  <div class="tab-pane" id="tab-rules-clan">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Устав клана</span></div>
+    <div class="md-body loading" id="content-rules-clan">Загрузка...</div>
+  </div>
+
+  <div class="tab-pane" id="tab-join">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Система вступления</span></div>
+    <div class="md-body loading" id="content-join">Загрузка...</div>
+  </div>
+
+  <div class="tab-pane" id="tab-birthdays">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Дни рождения</span></div>
+    <div class="md-body loading" id="content-birthdays">Загрузка...</div>
+  </div>
+
+  <div class="tab-pane" id="tab-roles">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Роли</span></div>
+    <div class="md-body loading" id="content-roles">Загрузка...</div>
+  </div>
+
+  <div class="tab-pane" id="tab-arc">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>ARC</span></div>
+    <div class="md-body loading" id="content-arc">Загрузка...</div>
+  </div>
+
+  <div class="tab-pane" id="tab-roster">
+    <div class="breadcrumb"><a href="index.html">Arasaka</a> › <span>Состав</span></div>
+    <div class="md-body loading" id="content-roster">Загрузка...</div>
+  </div>
+
+</main>
+
+<aside class="toc">
+  <div class="toc-title">На этой странице</div>
+  <ul class="toc-list" id="toc-list"></ul>
+</aside>
+</div>
+
+<footer>
+  <div class="footer-logo">
+    <img src="asa-logo-480.png" alt="Arasaka">
+    ARA<span class="accent">SAKA</span>
+  </div>
+  <ul class="footer-nav">
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="wiki.html">Вики</a></li>
+    <li><a href="https://discord.gg/SpufupDBB4" target="_blank">Discord</a></li>
+  </ul>
+  <div class="footer-status">
+    <span><span class="status-dot"></span>АКТИВЕН</span>
+    <span>35+ УЧАСТНИКОВ</span>
+  </div>
+</footer>
+
+<script>
+const MD_FILES = {
+  'rules-discord': 'discord.md',
+  'rules-clan':    'clan.md',
+  'join':          'join.md',
+  'birthdays':     'birthday.md',
+  'roles':         'roles.md',
+  'arc':           'arc.md',
+  'roster':        'roster.md'
+};
+
+const loaded = {};
+const MD_ANCHOR = {};
+marked.setOptions({ breaks: true, gfm: true });
+
+async function loadMD(tab) {
+  if (loaded[tab] || !MD_FILES[tab]) return;
+  try {
+    const r = await fetch(MD_FILES[tab]);
+    if (!r.ok) throw new Error('404');
+    const text = await r.text();
+    const el = document.getElementById('content-' + tab);
+    if (el) {
+      el.classList.remove('loading');
+      el.innerHTML = marked.parse(text);
+      addHeadingIds(el);
+      loaded[tab] = true;
+    }
+  } catch(e) {
+    const el = document.getElementById('content-' + tab);
+    if (el) el.innerHTML = '<p style="color:var(--gray-dim)">Не удалось загрузить файл.</p>';
+  }
+}
+
+function addHeadingIds(el) {
+  el.querySelectorAll('h2, h3').forEach(h => {
+    if (!h.id) h.id = h.textContent.trim().toLowerCase().replace(/[^а-яёa-z0-9]+/gi, '-').replace(/^-|-$/g,'');
+  });
+}
+
+function showTab(tabId) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(a => a.classList.remove('active'));
+  const pane = document.getElementById('tab-' + tabId);
+  if (pane) pane.classList.add('active');
+  document.querySelectorAll('.sb-link').forEach(a => {
+    if (a.dataset.tab === tabId) a.classList.add('active');
+  });
+  loadMD(tabId).then(() => {
+    buildTOC(tabId);
+    if (MD_ANCHOR[tabId]) {
+      const target = document.getElementById('content-' + tabId)?.querySelector('#' + MD_ANCHOR[tabId]);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+  buildTOC(tabId);
+  window.scrollTo({ top: 0 });
+  history.replaceState(null, '', '#' + tabId);
+}
+
+function buildTOC(tabId) {
+  const pane = document.getElementById('tab-' + tabId);
+  const list = document.getElementById('toc-list');
+  list.innerHTML = '';
+  if (!pane) return;
+  pane.querySelectorAll('h2[id], h3[id]').forEach(h => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    a.addEventListener('click', e => { e.preventDefault(); h.scrollIntoView({ behavior: 'smooth' }); });
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-tab]');
+  if (el) { e.preventDefault(); showTab(el.dataset.tab); }
+});
+
+const hash = location.hash.replace('#', '') || 'intro';
+const validTabs = ['intro','rules-discord','rules-clan','join','birthdays','roles','arc','roster'];
+showTab(validTabs.includes(hash) ? hash : 'intro');
+</script>
+</body>
+</html>
