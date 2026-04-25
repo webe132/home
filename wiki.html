@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Вики · Arasaka</title>
-<link rel="icon" type="image/png" href="asa-logo-480.png">
+<link rel="icon" type="image/png" href="files/image/asa-logo-480.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Rubik:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -124,18 +124,95 @@ footer {
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
 
+/* ── BURGER ── */
+.burger {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center;
+  width: 38px; height: 38px; gap: 5px; cursor: pointer;
+  background: none; border: none; padding: 0; z-index: 200;
+}
+.burger span {
+  display: block; width: 22px; height: 1.5px;
+  background: var(--gray); border-radius: 2px;
+  transition: transform 0.25s, opacity 0.25s, background 0.2s;
+  transform-origin: center;
+}
+.burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: var(--white); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: var(--white); }
+
+/* ── MOBILE SITE DRAWER ── */
+.mobile-drawer {
+  display: none;
+  position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
+  background: rgba(10,10,10,0.97); backdrop-filter: blur(16px);
+  z-index: 150; flex-direction: column;
+  border-top: 1px solid var(--border);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s ease;
+  overflow-y: auto;
+}
+.mobile-drawer.open { opacity: 1; pointer-events: all; }
+.mobile-drawer-inner { padding: 20px 16px 40px; }
+.mobile-drawer-section { margin-bottom: 8px; }
+.mobile-drawer-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.14em; color: var(--gray-dim);
+  padding: 10px 14px 4px; display: block;
+}
+.mobile-drawer-links { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.mobile-drawer-links a {
+  display: block; padding: 11px 14px;
+  color: var(--gray); text-decoration: none; font-size: 15px;
+  border-radius: 8px; transition: background 0.12s, color 0.12s;
+}
+.mobile-drawer-links a:hover { background: var(--panel); color: var(--white); }
+.mobile-drawer-sep { height: 1px; background: var(--border); margin: 14px 0; }
+.mobile-drawer-ext {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  background: rgba(180,53,53,0.07); border: 1px solid var(--border-red);
+  border-radius: var(--radius); color: var(--white); text-decoration: none;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em;
+}
+.mobile-drawer-ext + .mobile-drawer-ext { margin-top: 6px; }
+
+/* ── MOBILE WIKI NAV BAR ── */
+.mobile-wiki-nav {
+  display: none;
+  position: sticky; top: 52px; z-index: 80;
+  background: var(--bg-deep); border-bottom: 1px solid var(--border);
+  overflow-x: auto; white-space: nowrap;
+  scrollbar-width: none;
+}
+.mobile-wiki-nav::-webkit-scrollbar { display: none; }
+.mobile-wiki-nav-inner { display: inline-flex; gap: 4px; padding: 8px 12px; }
+.mobile-wiki-nav-btn {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gray); background: none; border: 1px solid transparent;
+  border-radius: 6px; padding: 6px 12px; cursor: pointer;
+  white-space: nowrap; transition: all 0.15s;
+}
+.mobile-wiki-nav-btn:hover { background: var(--panel); color: var(--white); }
+.mobile-wiki-nav-btn.active { color: var(--red); border-color: var(--border-red); background: rgba(180,53,53,0.06); }
+
 @media (max-width: 960px) {
   .wiki-layout { grid-template-columns: 1fr; }
   .sidebar, .toc { display: none; }
-  .wiki-content { padding: 22px 16px; }
-  nav { grid-template-columns: 48px 1fr 48px; padding: 0 16px; }
+  .wiki-content { padding: 22px 16px 48px; }
+  nav { grid-template-columns: auto 1fr auto; padding: 0 16px; }
+  .nav-links { display: none; }
+  .burger { display: flex; }
+  .mobile-drawer { display: flex; }
+  .mobile-wiki-nav { display: block; }
+  footer { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 16px; }
 }
 </style>
 </head>
 <body>
 <nav>
   <a class="nav-logo" href="index.html">
-    <img src="asa-logo-480.png" alt="Arasaka">
+    <img src="files/image/asa-logo-480.png" alt="Arasaka">
   </a>
   <ul class="nav-links">
     <li><a href="index.html">Главная</a></li>
@@ -143,8 +220,44 @@ footer {
     <li><a href="roadmap.html">Роудмапа</a></li>
     <li><a href="https://discord.gg/SpufupDBB4" target="_blank">Discord</a></li>
   </ul>
-  <div></div>
+  <button class="burger" id="burger" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- Мобильный дровер-меню -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="mobile-drawer-inner">
+    <div class="mobile-drawer-section">
+      <span class="mobile-drawer-label">Сайт</span>
+      <ul class="mobile-drawer-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="wiki.html">Вики</a></li>
+        <li><a href="roadmap.html">Роудмапа</a></li>
+      </ul>
+    </div>
+    <div class="mobile-drawer-sep"></div>
+    <a href="https://discord.gg/SpufupDBB4" class="mobile-drawer-ext" target="_blank">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Discord
+    </a>
+  </div>
+</div>
+
+<!-- Мобильная горизонтальная навигация по вики -->
+<div class="mobile-wiki-nav" id="mobile-wiki-nav">
+  <div class="mobile-wiki-nav-inner">
+    <button class="mobile-wiki-nav-btn" data-tab="intro">Введение</button>
+    <button class="mobile-wiki-nav-btn" data-tab="rules-discord">Discord</button>
+    <button class="mobile-wiki-nav-btn" data-tab="rules-clan">Устав</button>
+    <button class="mobile-wiki-nav-btn" data-tab="join">Вступление</button>
+    <button class="mobile-wiki-nav-btn" data-tab="roles">Роли</button>
+    <button class="mobile-wiki-nav-btn" data-tab="arc">ARC</button>
+    <button class="mobile-wiki-nav-btn" data-tab="roster">Состав</button>
+    <button class="mobile-wiki-nav-btn" data-tab="birthdays">ДР</button>
+    <button class="mobile-wiki-nav-btn" data-tab="ivent">Ивенты</button>
+  </div>
+</div>
 
 <div class="wiki-layout">
 <aside class="sidebar">
@@ -267,7 +380,7 @@ footer {
 
 <footer>
   <div class="footer-logo">
-    <img src="asa-logo-480.png" alt="Arasaka">
+    <img src="files/image/asa-logo-480.png" alt="Arasaka">
     ARA<span class="accent">SAKA</span>
   </div>
   <ul class="footer-nav">
@@ -283,14 +396,14 @@ footer {
 
 <script>
 const MD_FILES = {
-  'rules-discord': 'discord.md',
-  'rules-clan':    'clan.md',
-  'join':          'join.md',
-  'birthdays':     'birthday.md',
-  'roles':         'roles.md',
-  'arc':           'arc.md',
-  'roster':        'roster.md',
-  'ivent':         'ivent.md'
+  'rules-discord': 'files/md/discord.md',
+  'rules-clan':    'files/md/clan.md',
+  'join':          'files/md/join.md',
+  'birthdays':     'files/md/birthday.md',
+  'roles':         'files/md/roles.md',
+  'arc':           'files/md/arc.md',
+  'roster':        'files/md/roster.md',
+  'ivent':         'files/md/ivent.md'
 };
 
 const loaded = {};
@@ -367,6 +480,57 @@ document.addEventListener('click', e => {
 const hash = location.hash.replace('#', '') || 'intro';
 const validTabs = ['intro','rules-discord','rules-clan','join','birthdays','roles','arc','roster','ivent'];
 showTab(validTabs.includes(hash) ? hash : 'intro');
+
+/* ── Burger ── */
+const burger = document.getElementById('burger');
+const drawer = document.getElementById('mobile-drawer');
+burger.addEventListener('click', () => {
+  const open = burger.classList.toggle('open');
+  drawer.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+drawer.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+/* ── Mobile wiki nav sync ── */
+const mobileNavBtns = document.querySelectorAll('.mobile-wiki-nav-btn');
+mobileNavBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    showTab(btn.dataset.tab);
+  });
+});
+
+function updateMobileNav(tabId) {
+  mobileNavBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabId);
+  });
+  // scroll active btn into view
+  const active = document.querySelector('.mobile-wiki-nav-btn.active');
+  if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+// Patch showTab to also update mobile nav
+const origShowTab = showTab;
+window._origShowTab = origShowTab;
+// Override
+window.showTab = function(tabId) {
+  origShowTab(tabId);
+  updateMobileNav(tabId);
+};
+// Also intercept click on sidebar links
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-tab]');
+  if (el && !el.classList.contains('mobile-wiki-nav-btn')) {
+    updateMobileNav(el.dataset.tab);
+  }
+});
+// Init mobile nav
+updateMobileNav(validTabs.includes(hash) ? hash : 'intro');
 </script>
 </body>
 </html>

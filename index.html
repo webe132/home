@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARASAKA</title>
-<link rel="icon" type="image/png" href="asa-logo-480.png">
+<link rel="icon" type="image/png" href="files/image/asa-logo-480.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Rubik:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -259,21 +259,88 @@
   .footer-links a:hover { color: var(--gray); }
   .footer-copy { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-dim); }
 
+  /* ── BURGER BUTTON ── */
+  .burger {
+    display: none;
+    flex-direction: column; justify-content: center; align-items: center;
+    width: 38px; height: 38px; gap: 5px; cursor: pointer;
+    background: none; border: none; padding: 0; z-index: 200;
+  }
+  .burger span {
+    display: block; width: 22px; height: 1.5px;
+    background: var(--gray); border-radius: 2px;
+    transition: transform 0.25s, opacity 0.25s, background 0.2s;
+    transform-origin: center;
+  }
+  .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: var(--white); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: var(--white); }
+
+  /* ── MOBILE DRAWER ── */
+  .mobile-drawer {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+    background: rgba(10,10,10,0.97);
+    backdrop-filter: blur(16px);
+    z-index: 150;
+    flex-direction: column;
+    padding: 24px 20px;
+    border-top: 1px solid var(--border);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .mobile-drawer.open { opacity: 1; pointer-events: all; }
+  .mobile-drawer ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .mobile-drawer ul a {
+    display: block; padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray); text-decoration: none;
+    border: 1px solid transparent; border-radius: var(--radius);
+    transition: all 0.15s;
+  }
+  .mobile-drawer ul a:hover,
+  .mobile-drawer ul a:active { color: var(--white); background: var(--panel); border-color: var(--border); }
+  .mobile-drawer ul a.active { color: var(--red); border-color: var(--border-red); }
+  .mobile-drawer-sep { height: 1px; background: var(--border); margin: 16px 0; }
+  .mobile-drawer-discord {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px; background: rgba(180,53,53,0.08);
+    border: 1px solid var(--border-red); border-radius: var(--radius);
+    color: var(--white); text-decoration: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em;
+  }
+
   @media (max-width: 768px) {
-    nav { padding: 0 16px; grid-template-columns: 48px 1fr 48px; }
+    nav { padding: 0 16px; grid-template-columns: auto 1fr auto; }
     .nav-links { display: none; }
-    section { padding: 56px 16px; }
-    .hero { padding: 80px 16px 100px; }
+    .burger { display: flex; }
+    .mobile-drawer { display: flex; }
+
+    section { padding: 48px 16px; }
+    .hero { padding: 80px 16px 80px; }
     .hero-corner { display: none; }
-    .hero-stats { flex-direction: column; gap: 1px; }
-    .stat { width: 200px; }
+    .hero-logo { width: 72px; height: 72px; border-radius: 16px; }
+    .hero-title { font-size: clamp(48px, 14vw, 90px); }
+    .hero-subtitle { font-size: 14px; }
+
+    .hero-stats { flex-direction: column; gap: 1px; width: 100%; max-width: 280px; }
+    .stat { width: 100%; }
     .stat:first-child { border-radius: var(--radius) var(--radius) 0 0; border-right: 1px solid var(--border); border-bottom: none; }
     .stat:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+
+    .hero-cta { flex-direction: column; align-items: stretch; width: 100%; max-width: 280px; }
+    .btn { justify-content: center; }
+
     .about-grid { grid-template-columns: 1fr; }
     .events-grid { grid-template-columns: 1fr; }
-    .join-block { flex-direction: column; }
-    footer { padding: 20px 16px; flex-direction: column; align-items: flex-start; }
-    .status-bar { padding: 5px 16px; }
+    .join-block { flex-direction: column; padding: 22px 20px; }
+    .join-btns { flex-direction: column; }
+    .join-btns .btn { justify-content: center; }
+
+    footer { padding: 20px 16px; flex-direction: column; align-items: flex-start; gap: 16px; }
+    .footer-links { flex-wrap: wrap; gap: 12px; }
+    .status-bar { padding: 5px 16px; gap: 12px; }
   }
 
   .projects-list { display: flex; flex-direction: column; gap: 12px; }
@@ -301,7 +368,7 @@
 
 <nav>
   <a class="nav-logo" href="index.html">
-    <img src="asa-logo-480.png" alt="Arasaka">
+    <img src="files/image/asa-logo-480.png" alt="Arasaka">
   </a>
   <ul class="nav-links">
     <li><a href="index.html" class="active">Главная</a></li>
@@ -309,8 +376,23 @@
     <li><a href="roadmap.html">Роудмапа</a></li>
     <li><a href="https://discord.gg/SpufupDBB4" target="_blank">Discord</a></li>
   </ul>
-  <div></div>
+  <button class="burger" id="burger" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="index.html" class="active">Главная</a></li>
+    <li><a href="wiki.html">Вики</a></li>
+    <li><a href="roadmap.html">Роудмапа</a></li>
+  </ul>
+  <div class="mobile-drawer-sep"></div>
+  <a href="https://discord.gg/SpufupDBB4" class="mobile-drawer-discord" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Discord
+  </a>
+</div>
 
 <div class="hero">
   <div class="hero-glow"></div>
@@ -318,7 +400,7 @@
   <div class="hero-corner tr"></div>
   <div class="hero-corner bl"></div>
   <div class="hero-corner br"></div>
-  <img class="hero-logo" src="asa-logo-480.png" alt="Arasaka">
+  <img class="hero-logo" src="files/image/asa-logo-480.png" alt="Arasaka">
   <div class="hero-tag">CLAN · DIVISION · UNIT</div>
   <h1 class="hero-title">ARA<span class="red">SAKA</span></h1>
   <p class="hero-since">Активен с 28.12.2020</p>
@@ -460,7 +542,7 @@
 
 <footer>
   <div class="footer-logo">
-    <img src="asa-logo-480.png" alt="Arasaka">
+    <img src="files/image/asa-logo-480.png" alt="Arasaka">
     ARA<span class="accent">SAKA</span>
   </div>
   <ul class="footer-links">
@@ -512,7 +594,7 @@
 
       // Читаем .md
       try {
-        const r = await fetch(`ivent_${id}.md`);
+        const r = await fetch(`files/md/ivent_${id}.md`);
         if (r.ok) {
           const text = await r.text();
           const lines = text.trim().split('\n').filter(l => l.trim());
@@ -533,8 +615,8 @@
       let imgSrc = '';
       for (const ext of ['png', 'jpg', 'jpeg', 'webp']) {
         try {
-          const r = await fetch(`ivent_${id}.${ext}`, { method: 'HEAD' });
-          if (r.ok) { imgSrc = `ivent_${id}.${ext}`; break; }
+          const r = await fetch(`files/image/ivent_${id}.${ext}`, { method: 'HEAD' });
+          if (r.ok) { imgSrc = `files/image/ivent_${id}.${ext}`; break; }
         } catch(_) {}
       }
 
@@ -590,7 +672,7 @@
     if (!list) return;
     let cfg;
     try {
-      const r = await fetch('projects.json?' + Date.now());
+      const r = await fetch('files/projects.json?' + Date.now());
       cfg = await r.json();
     } catch(e) {
       list.innerHTML = '<p style="color:var(--gray-dim);padding:20px;font-family:JetBrains Mono,monospace;font-size:12px">Не удалось загрузить projects.json</p>';
@@ -624,7 +706,7 @@
       imgLoader.textContent = 'загрузка...';
       imgWrap.appendChild(imgLoader);
       card.appendChild(body); card.appendChild(imgWrap); list.appendChild(card);
-      fetch(id + '.md?' + Date.now()).then(r => r.ok ? r.text() : null).then(md => {
+      fetch('files/md/' + id + '.md?' + Date.now()).then(r => r.ok ? r.text() : null).then(md => {
         if (!md) { titleEl.textContent = 'Проект ' + id; descEl.textContent = 'Описание не найдено. Добавьте файл ' + id + '.md'; return; }
         const lines = md.trim().split('\n');
         const titleLine = lines.find(l => l.startsWith('# '));
@@ -636,10 +718,10 @@
       let found = false;
       for (const ext of exts) {
         try {
-          const r = await fetch(id + '.' + ext, { method: 'HEAD' });
+          const r = await fetch('files/image/' + id + '.' + ext, { method: 'HEAD' });
           if (r.ok) {
             const img = document.createElement('img');
-            img.src = id + '.' + ext; img.alt = 'Проект ' + id;
+            img.src = 'files/image/' + id + '.' + ext; img.alt = 'Проект ' + id;
             img.onload = () => imgLoader.remove();
             imgWrap.appendChild(img); found = true; break;
           }
@@ -650,7 +732,23 @@
     }
   }
   loadProjects();
+
+  /* ── Burger menu ── */
+  const burger = document.getElementById('burger');
+  const drawer = document.getElementById('mobile-drawer');
+  burger.addEventListener('click', () => {
+    const open = burger.classList.toggle('open');
+    drawer.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  drawer.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      burger.classList.remove('open');
+      drawer.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
 </script>
-<script src="index_patch.js"></script>
+<script src="files/index_patch.js"></script>
 </body>
 </html>
