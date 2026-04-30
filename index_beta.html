@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARASAKA</title>
+<link rel="icon" type="image/png" href="files/image/asa-logo-480.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Rubik:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+:root {
+  --bg: #111111; --bg-deep: #0a0a0a;
+  --red: #B43535; --red-dim: #7a2424; --red-bright: #d44040;
+  --white: #f2f2f0; --gray: #888880; --gray-dim: #444440;
+  --panel: #161616; --border: #222222; --border-red: rgba(180,53,53,0.35);
+  --radius: 10px; --radius-lg: 20px;
+  --nav-h: 60px;
+  --sidebar-w: 230px; --toc-w: 196px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+*{-webkit-tap-highlight-color:transparent;outline:none;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-deep);color:var(--white);font-family:'Rubik',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.012) 3px,rgba(0,0,0,0.012) 4px);pointer-events:none;z-index:9999;}
+
+/* ── GRID ── */
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(180,53,53,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(180,53,53,0.022) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+
+/* ── BACKGROUND DECORATIONS ── */
+.bg-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(180,53,53,0.07) 0%,transparent 68%);}
+.bg-orb-1{width:700px;height:700px;top:10%;left:-12%;animation:bg-drift1 22s ease-in-out infinite;}
+.bg-orb-2{width:550px;height:550px;top:55%;right:-8%;animation:bg-drift2 28s ease-in-out infinite;}
+.bg-orb-3{width:450px;height:450px;bottom:5%;left:28%;animation:bg-drift1 19s ease-in-out infinite 4s;}
+.bg-ring{position:absolute;border-radius:50%;border:1px solid rgba(180,53,53,0.05);}
+.bg-ring-1{width:560px;height:560px;top:18%;left:5%;}
+.bg-ring-2{width:820px;height:820px;top:50%;right:-15%;}
+.bg-diamond{position:absolute;background:rgba(180,53,53,0.03);transform:rotate(45deg);filter:blur(30px);}
+.bg-diamond-1{width:240px;height:240px;top:30%;right:8%;}
+.bg-diamond-2{width:160px;height:160px;bottom:30%;left:12%;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:var(--nav-h);background:rgba(10,10,10,0.65);backdrop-filter:blur(20px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,0.04);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;}
+.nav-logo img{width:30px;height:30px;border-radius:8px;object-fit:contain;}
+.nav-logo-text{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.22em;color:var(--white);text-transform:uppercase;}
+.nav-logo-text .r{color:var(--red);}
+.nav-links{display:flex;gap:0;list-style:none;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray);text-decoration:none;padding:7px 20px;border-radius:8px;transition:color 0.2s;position:relative;cursor:pointer;}
+.nav-links a::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:0;height:1.5px;background:var(--red);border-radius:2px;transition:width 0.25s ease;}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{width:14px;}
+.nav-links a.active{color:var(--white);}
+.nav-links a.active::after{width:18px;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-discord{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);text-decoration:none;padding:6px 14px;border:1px solid var(--border-red);border-radius:8px;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+.nav-discord:hover{background:rgba(180,53,53,0.1);color:var(--red-bright);}
+
+/* ── BURGER ── */
+.burger{display:none;flex-direction:column;justify-content:center;align-items:center;width:38px;height:38px;gap:5px;cursor:pointer;background:none;border:none;padding:0;z-index:200;}
+.burger span{display:block;width:22px;height:1.5px;background:var(--gray);border-radius:2px;transition:transform 0.25s,opacity 0.25s,background 0.2s;transform-origin:center;}
+.burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);background:var(--white);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);background:var(--white);}
+
+/* ── MOBILE DRAWER ── */
+.mobile-drawer{display:none;position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;background:rgba(10,10,10,0.97);backdrop-filter:blur(20px);z-index:150;flex-direction:column;padding:24px 20px;border-top:1px solid var(--border);opacity:0;pointer-events:none;transition:opacity 0.22s ease;}
+.mobile-drawer.open{opacity:1;pointer-events:all;}
+.mobile-drawer ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.mobile-drawer ul a{display:block;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);text-decoration:none;border:1px solid transparent;border-radius:var(--radius);transition:all 0.15s;cursor:pointer;}
+.mobile-drawer ul a:hover{color:var(--white);background:var(--panel);border-color:var(--border);}
+.mobile-drawer ul a.active{color:var(--red);}
+.mobile-drawer-sep{height:1px;background:var(--border);margin:16px 0;}
+.mobile-drawer-discord{display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(180,53,53,0.08);border:1px solid var(--border-red);border-radius:var(--radius);color:var(--white);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;}
+
+/* ── PAGE VIEWS ── */
+.page-view{display:none;}
+.page-view.active{display:block;}
+#page-home.active{display:block;}
+#page-wiki.active{display:block;}
+#page-roadmap.active{display:block;}
+
+/* ━━━━━━━━━━━━━━━ HOME PAGE ━━━━━━━━━━━━━━━ */
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 40px 130px;overflow:hidden;isolation:isolate;}
+.hero-beams{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.hero-beams::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);width:160vmax;height:160vmax;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(180,53,53,0.05) 35deg,transparent 70deg,transparent 155deg,rgba(180,53,53,0.035) 190deg,transparent 225deg,transparent 310deg,rgba(180,53,53,0.025) 345deg,transparent 360deg);animation:beams-spin 28s linear infinite;}
+.hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:min(760px,120vw);height:min(760px,120vw);background:radial-gradient(circle at 50% 50%,rgba(180,53,53,0.18) 0%,rgba(180,53,53,0.06) 38%,transparent 68%);border-radius:50%;animation:orb-breathe 7s ease-in-out infinite;pointer-events:none;}
+.hero-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;}
+.hero-logo{width:100px;height:100px;border-radius:24px;margin-bottom:24px;animation:fadeUp 0.7s ease both,logo-pulse 5s ease-in-out infinite 1s;box-shadow:0 0 0 1px rgba(180,53,53,0.25),0 0 50px rgba(180,53,53,0.18),0 16px 48px rgba(0,0,0,0.5);}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.32em;color:var(--red);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:14px;animation:fadeUp 0.7s 0.08s ease both;opacity:0.9;}
+.hero-tag::before{content:'';display:block;width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--red-dim));}
+.hero-tag::after{content:'';display:block;width:36px;height:1px;background:linear-gradient(90deg,var(--red-dim),transparent);}
+.hero-title{font-family:'Rajdhani',sans-serif;font-size:clamp(76px,14vw,168px);font-weight:700;letter-spacing:0.05em;line-height:0.87;text-align:center;text-transform:uppercase;animation:fadeUp 0.7s 0.14s ease both;}
+.hero-title .w{color:var(--white);}
+.hero-title .r{color:var(--red);text-shadow:0 0 100px rgba(180,53,53,0.45),0 0 40px rgba(180,53,53,0.25);}
+.hero-subtitle{margin-top:22px;font-size:14px;color:var(--gray);text-align:center;max-width:380px;line-height:1.75;animation:fadeUp 0.7s 0.2s ease both;}
+.hero-since{margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.22em;color:var(--gray-dim);text-transform:uppercase;animation:fadeUp 0.7s 0.22s ease both;}
+
+/* STATS — original design */
+.hero-stats{display:flex;gap:1px;margin-top:40px;animation:fadeUp 0.7s 0.2s ease both;}
+.stat{background:var(--panel);border:1px solid var(--border);padding:16px 28px;text-align:center;position:relative;}
+.stat:not(:last-child){border-right:none;}
+.stat:first-child{border-radius:var(--radius) 0 0 var(--radius);}
+.stat:last-child{border-radius:0 var(--radius) var(--radius) 0;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);opacity:0;transition:opacity 0.2s;}
+.stat:first-child::before{border-radius:var(--radius) 0 0 0;}
+.stat:last-child::before{border-radius:0 var(--radius) 0 0;}
+.stat:hover::before{opacity:1;}
+.stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--gray);text-transform:uppercase;margin-top:3px;}
+
+/* HERO CTA */
+.hero-cta{display:flex;gap:10px;margin-top:36px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.7s 0.25s ease both;}
+
+/* BUTTONS */
+.btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;padding:11px 26px;border:1px solid;border-radius:var(--radius);transition:all 0.2s;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary{background:var(--red);border-color:var(--red);color:var(--white);box-shadow:0 0 24px rgba(180,53,53,0.25);}
+.btn-primary:hover{background:var(--red-bright);border-color:var(--red-bright);box-shadow:0 0 36px rgba(180,53,53,0.45);}
+.btn-secondary{background:transparent;border-color:var(--border);color:var(--gray);}
+.btn-secondary:hover{border-color:var(--gray-dim);color:var(--white);background:rgba(255,255,255,0.03);}
+
+/* HOME SECTIONS */
+section{position:relative;z-index:1;padding:72px 48px;max-width:1100px;margin:0 auto;}
+.section-header{display:flex;align-items:center;gap:20px;margin-bottom:44px;}
+.section-index{font-family:'Rajdhani',sans-serif;font-size:68px;font-weight:700;color:rgba(180,53,53,0.5);letter-spacing:0.01em;line-height:1;user-select:none;flex-shrink:0;}
+.section-title-group{display:flex;flex-direction:column;gap:2px;}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;color:var(--red);text-transform:uppercase;}
+.section-title{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;line-height:1;}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.sep{max-width:1100px;margin:0 auto;padding:0 48px;position:relative;z-index:1;}
+.sep-line{height:1px;background:linear-gradient(90deg,rgba(180,53,53,0.3),var(--border) 28%,transparent 70%);}
+
+/* ABOUT GRID */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.about-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 30px;position:relative;transition:all 0.28s;overflow:hidden;}
+.about-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 0% 100%,rgba(180,53,53,0.06) 0%,transparent 55%);opacity:0;transition:opacity 0.3s;}
+.about-card:hover{border-color:rgba(180,53,53,0.22);background:#1b1b1b;transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.35);}
+.about-card:hover::after{opacity:1;}
+.card-icon{font-size:22px;margin-bottom:12px;display:block;}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);margin-bottom:8px;}
+.card-text{font-size:13px;color:var(--gray);line-height:1.72;}
+
+/* EVENTS */
+.events-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.event-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all 0.28s;}
+.event-card:hover{border-color:rgba(180,53,53,0.22);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.45);}
+.event-img{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--bg-deep);}
+.event-img img{width:100%;height:100%;object-fit:cover;opacity:0.78;transition:all 0.4s;}
+.event-card:hover .event-img img{opacity:1;transform:scale(1.04);}
+.event-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,var(--bg-deep) 0px,var(--bg-deep) 14px,#131313 14px,#131313 28px);color:var(--gray-dim);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;}
+.event-body{padding:16px 18px;}
+.event-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);margin-bottom:8px;}
+.event-desc{font-size:12.5px;color:var(--gray);line-height:1.65;margin-bottom:10px;}
+.event-author{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--gray-dim);text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.event-author::before{content:'';display:inline-block;width:14px;height:1px;background:var(--red-dim);}
+.events-loading{color:var(--gray-dim);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;padding:40px 0;text-align:center;}
+.events-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* PROJECTS */
+.projects-list{display:flex;flex-direction:column;gap:12px;}
+.project-card{display:grid;grid-template-columns:280px 1fr;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-height:220px;transition:all 0.28s;}
+.project-card:hover{border-color:rgba(180,53,53,0.22);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
+.project-body{padding:24px 26px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;}
+.project-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;padding:3px 9px;border-radius:5px;border:1px solid;margin-bottom:10px;}
+.project-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);margin-bottom:8px;}
+.project-desc{font-size:13px;color:var(--gray);line-height:1.65;flex:1;}
+.project-img{position:relative;overflow:hidden;background:var(--bg-deep);}
+.project-img::before{content:'';display:block;padding-top:56.25%;}
+.project-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.8;transition:all 0.4s;}
+.project-card:hover .project-img img{opacity:1;transform:scale(1.03);}
+.project-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,var(--bg-deep) 0px,var(--bg-deep) 12px,#141414 12px,#141414 24px);color:var(--gray-dim);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;}
+.project-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gray-dim);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;}
+
+/* QUICK LINKS */
+.quick-links{display:flex;flex-direction:column;gap:8px;}
+.quick-link{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);text-decoration:none;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:500;letter-spacing:0.04em;transition:all 0.22s;gap:12px;cursor:pointer;position:relative;overflow:hidden;}
+.quick-link::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);transform:scaleY(0);transform-origin:bottom;transition:transform 0.25s ease;}
+.quick-link:hover{background:#1b1b1b;border-color:rgba(180,53,53,0.2);padding-left:26px;}
+.quick-link:hover::before{transform:scaleY(1);}
+.quick-link-left{display:flex;align-items:center;gap:12px;}
+.quick-link-icon{font-size:18px;}
+.quick-link-sub{font-family:'Rubik',sans-serif;font-size:12px;color:var(--gray);margin-top:2px;font-weight:400;}
+.quick-link-arrow{color:var(--gray-dim);font-size:16px;transition:transform 0.22s,color 0.22s;}
+.quick-link:hover .quick-link-arrow{transform:translateX(4px);color:var(--red);}
+
+/* JOIN */
+.join-block{background:var(--panel);border:1px solid var(--border-red);border-radius:var(--radius-lg);padding:32px 36px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;}
+.join-block::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle at 100% 0%,rgba(180,53,53,0.1) 0%,transparent 65%);pointer-events:none;}
+.join-title{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+.join-desc{font-size:13px;color:var(--gray);margin-top:4px;max-width:360px;line-height:1.7;}
+.join-btns{display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0;}
+
+/* ━━━━━━━━━━━━━━━ WIKI PAGE ━━━━━━━━━━━━━━━ */
+#page-wiki{padding-top:var(--nav-h);}
+.wiki-wrap{max-width:1300px;margin:0 auto;padding:0 clamp(16px,4vw,80px);}
+.wiki-layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr var(--toc-w);min-height:calc(100vh - var(--nav-h));}
+.sidebar{border-right:1px solid var(--border);padding:18px 0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.sb-group{margin-bottom:4px;}
+.sb-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray-dim);padding:10px 16px 4px;display:block;}
+.sb-links{list-style:none;}
+.sb-link{display:block;padding:6px 16px;color:var(--gray);text-decoration:none;font-size:14px;transition:background 0.12s,color 0.12s;position:relative;cursor:pointer;}
+.sb-link:hover{background:var(--panel);color:var(--white);}
+.sb-link.active{background:var(--panel);color:var(--white);}
+.sb-link.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--red);}
+.sb-badge{display:inline-block;margin-left:7px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.05em;text-transform:uppercase;background:var(--red-dim);color:var(--red-bright);border:1px solid var(--red-dim);border-radius:4px;padding:1px 5px;vertical-align:middle;line-height:1.4;}
+.wiki-content{padding:36px 48px;min-width:0;}
+.breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;}
+.breadcrumb a{color:var(--gray-dim);text-decoration:none;cursor:pointer;}
+.breadcrumb a:hover{color:var(--gray);}
+.md-body h1{font-family:'Rubik',sans-serif;font-size:28px;font-weight:600;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.md-body h2{font-family:'Rubik',sans-serif;font-size:20px;font-weight:600;color:var(--white);margin:28px 0 10px;scroll-margin-top:80px;}
+.md-body h3{font-family:'Rubik',sans-serif;font-size:17px;font-weight:600;color:var(--white);margin:18px 0 8px;scroll-margin-top:80px;}
+.md-body p{color:var(--gray);margin-bottom:12px;font-size:16px;line-height:1.75;}
+.md-body ul,.md-body ol{color:var(--gray);padding-left:22px;margin-bottom:14px;display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:1.75;}
+.md-body li strong{color:var(--white);}
+.md-body a{color:var(--red);text-decoration:none;}
+.md-body a:hover{text-decoration:underline;}
+.md-body hr{border:none;border-top:1px solid var(--border);margin:28px 0;}
+.md-body code{font-family:'JetBrains Mono',monospace;font-size:12px;background:#1e1e1e;border:1px solid var(--border);padding:1px 6px;border-radius:5px;color:var(--white);}
+.md-body strong{color:var(--white);}
+.md-body table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+.md-body th{background:var(--panel);color:var(--white);font-weight:600;padding:8px 14px;text-align:left;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;}
+.md-body td{padding:7px 14px;border:1px solid var(--border);color:var(--gray);}
+.md-body tr:hover td{background:rgba(255,255,255,0.015);}
+.loading{color:var(--gray-dim);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;padding:40px 0;}
+.callout{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;margin:16px 0;}
+.callout-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--red);margin-bottom:5px;}
+.callout p{margin:0;font-size:14px;color:var(--gray);}
+.link-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0;}
+.link-card{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;color:var(--white);font-size:14px;transition:background 0.12s,border-color 0.12s;cursor:pointer;}
+.link-card:hover{background:#1c1c1c;border-color:#333;}
+.link-card.new-card{border-color:var(--border-red);}
+.link-card span{color:var(--gray-dim);}
+.update-banner{background:linear-gradient(135deg,rgba(180,53,53,0.08),rgba(180,53,53,0.03));border:1px solid var(--border-red);border-radius:var(--radius);padding:14px 18px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px;}
+.update-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.update-text{flex:1;}
+.update-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--red);margin-bottom:4px;}
+.update-desc{font-size:13px;color:var(--gray);line-height:1.55;}
+.toc{border-left:1px solid var(--border);padding:22px 0 22px 18px;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;}
+.toc::-webkit-scrollbar{width:4px;}
+.toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray-dim);margin-bottom:10px;}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.toc-list a{color:var(--gray-dim);text-decoration:none;display:block;padding:3px 0;transition:color 0.12s;line-height:1.4;font-size:13px;}
+.toc-list a:hover{color:var(--gray);}
+.toc-list .toc-h3{padding-left:12px;font-size:11px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.mobile-wiki-nav{display:none;position:sticky;top:var(--nav-h);z-index:80;background:var(--bg-deep);border-bottom:1px solid var(--border);overflow-x:auto;white-space:nowrap;scrollbar-width:none;}
+.mobile-wiki-nav::-webkit-scrollbar{display:none;}
+.mobile-wiki-nav-inner{display:inline-flex;gap:4px;padding:8px 12px;}
+.mobile-wiki-nav-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray);background:none;border:1px solid transparent;border-radius:6px;padding:6px 12px;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+.mobile-wiki-nav-btn:hover{background:var(--panel);color:var(--white);}
+.mobile-wiki-nav-btn.active{color:var(--red);border-color:var(--border-red);background:rgba(180,53,53,0.06);}
+
+/* ━━━━━━━━━━━━━━━ ROADMAP PAGE ━━━━━━━━━━━━━━━ */
+#page-roadmap{padding-top:var(--nav-h);}
+.rm-page{max-width:860px;margin:0 auto;padding:3rem 2rem 6rem;}
+.rm-section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--red);text-transform:uppercase;margin-bottom:6px;}
+.rm-title{font-family:'Rajdhani',sans-serif;font-size:clamp(1.6rem,4vw,2.8rem);letter-spacing:0.1em;color:var(--white);text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.rm-subtitle{color:var(--gray);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;margin-bottom:2.5rem;}
+.rm-stats-row{display:flex;gap:1px;margin-bottom:2.5rem;}
+.rm-stat-card{background:var(--panel);border:1px solid var(--border);padding:1rem 1.5rem;flex:1;min-width:120px;}
+.rm-stat-card:first-child{border-radius:var(--radius) 0 0 var(--radius);}
+.rm-stat-card:last-child{border-radius:0 var(--radius) var(--radius) 0;}
+.rm-stat-card:not(:last-child){border-right:none;}
+.rm-stat-value{font-family:'Rajdhani',sans-serif;font-size:2rem;letter-spacing:0.05em;line-height:1;margin-bottom:4px;font-weight:700;}
+.rm-stat-value.green{color:#4caf6e;}
+.rm-stat-value.gold{color:var(--red);}
+.rm-stat-value.muted{color:var(--gray);}
+.rm-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--gray-dim);text-transform:uppercase;}
+.rm-progress-section{margin-bottom:2.5rem;}
+.rm-progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.6rem;}
+.rm-progress-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--gray-dim);text-transform:uppercase;}
+.rm-progress-pct{font-family:'Rajdhani',sans-serif;font-size:1.2rem;letter-spacing:0.1em;color:#4caf6e;text-shadow:0 0 12px rgba(76,175,110,0.55);}
+.rm-progress-track{height:6px;background:var(--panel);border:1px solid var(--border);position:relative;overflow:visible;border-radius:3px;}
+.rm-progress-fill{height:100%;background:linear-gradient(90deg,#2d7a4e,#4caf6e);transition:width 1s cubic-bezier(.4,0,.2,1);position:relative;border-radius:3px;box-shadow:0 0 6px rgba(76,175,110,0.5),0 0 18px rgba(76,175,110,0.25);}
+.rm-progress-fill::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);height:200%;width:3px;background:rgba(180,255,210,0.85);border-radius:2px;filter:blur(2px);animation:rm-tip-pulse 1.6s ease-in-out infinite alternate;}
+@keyframes rm-tip-pulse{from{opacity:0.5}to{opacity:1;box-shadow:0 0 12px rgba(76,175,110,0.9);}}
+.rm-segments-track{display:flex;gap:3px;margin-top:8px;}
+.rm-seg{flex:1;height:3px;background:var(--border);border-radius:2px;transition:background .4s,box-shadow .4s;}
+.rm-seg.done{background:#4caf6e;box-shadow:0 0 4px rgba(76,175,110,0.6),0 0 10px rgba(76,175,110,0.25);}
+.rm-timeline{position:relative;padding-left:2px;}
+.rm-timeline-spine{position:absolute;left:20px;top:0;bottom:0;width:1px;background:var(--border);z-index:0;}
+.rm-timeline-spine-fill{position:absolute;left:0;top:0;width:100%;background:linear-gradient(to bottom,#2d7a4e,#4caf6e);transition:height 1.2s cubic-bezier(.4,0,.2,1);box-shadow:0 0 6px rgba(76,175,110,0.5),0 0 20px rgba(76,175,110,0.2);border-radius:1px;}
+.rm-step{display:flex;align-items:flex-start;gap:1.2rem;position:relative;z-index:1;margin-bottom:0;opacity:0;transform:translateX(-12px);animation:rm-step-in .4s forwards;}
+@keyframes rm-step-in{to{opacity:1;transform:translateX(0);}}
+.rm-step-dot-wrap{width:40px;flex-shrink:0;display:flex;justify-content:center;padding-top:18px;}
+.rm-step-dot{width:14px;height:14px;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;transition:border-color .3s,box-shadow .3s;flex-shrink:0;}
+.rm-step-dot.done{border-color:#4caf6e;background:#1a3326;box-shadow:0 0 8px rgba(76,175,110,0.55),0 0 18px rgba(76,175,110,0.20);}
+.rm-step-dot-inner{width:6px;height:6px;background:var(--gray-dim);}
+.rm-step-dot.done .rm-step-dot-inner{background:#4caf6e;box-shadow:0 0 4px rgba(76,175,110,0.8);}
+.rm-step-body{flex:1;border:1px solid var(--border);background:var(--panel);padding:1rem 1.2rem;transition:border-color .3s,background .3s;margin:8px 0;border-radius:var(--radius);}
+.rm-step-body:hover{border-color:var(--border);background:#1b1b1b;}
+.rm-step.done-step .rm-step-body{border-color:#1e3d2a;background:#0f1f17;}
+.rm-step.done-step .rm-step-body:hover{border-color:#2a5038;}
+.rm-step-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.rm-step-index{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--gray-dim);}
+.rm-step-name{font-family:'Rajdhani',sans-serif;font-size:15px;letter-spacing:0.06em;color:var(--white);flex:1;}
+.rm-step.done-step .rm-step-name{color:#a0c8b0;}
+.rm-step-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;padding:2px 8px;text-transform:uppercase;border:1px solid;white-space:nowrap;border-radius:4px;}
+.badge-done{color:#4caf6e;border-color:#4caf6e;background:rgba(76,175,110,0.08);}
+.badge-wip{color:var(--red-bright);border-color:var(--red);background:rgba(180,53,53,0.08);}
+.badge-pending{color:var(--gray-dim);border-color:var(--gray-dim);background:transparent;}
+
+/* ━━━━━━━━━━━━━━━ FOOTER + STATUS BAR ━━━━━━━━━━━━━━━ */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.5rem 3rem;margin-bottom:30px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-logo{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;color:var(--gray-dim);display:flex;align-items:center;gap:8px;text-transform:uppercase;}
+.footer-logo img{width:20px;height:20px;border-radius:5px;opacity:0.45;}
+.footer-logo .accent{color:var(--red);opacity:0.55;}
+.footer-links{display:flex;gap:24px;list-style:none;}
+.footer-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--gray-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;cursor:pointer;}
+.footer-links a:hover{color:var(--gray);}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gray-dim);}
+.status-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(10,10,10,0.92);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;align-items:center;gap:20px;padding:5px 48px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.1em;color:var(--gray-dim);}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#4caf50;display:inline-block;margin-right:5px;box-shadow:0 0 7px #4caf50;animation:pulse 2.5s ease-in-out infinite;}
+.status-item{display:flex;align-items:center;gap:3px;}
+.status-sep{width:1px;height:10px;background:var(--border);}
+.ticker{overflow:hidden;white-space:nowrap;flex:1;}
+.ticker-inner{display:inline-block;animation:ticker 36s linear infinite;}
+
+/* ━━━━━━━━━━━━━━━ REVEAL ━━━━━━━━━━━━━━━ */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity 0.7s,transform 0.7s;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ━━━━━━━━━━━━━━━ KEYFRAMES ━━━━━━━━━━━━━━━ */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+@keyframes beams-spin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes orb-breathe{0%,100%{transform:translate(-50%,-58%) scale(1);opacity:1}50%{transform:translate(-50%,-58%) scale(1.18);opacity:0.65}}
+@keyframes logo-pulse{0%,100%{box-shadow:0 0 0 1px rgba(180,53,53,0.22),0 0 48px rgba(180,53,53,0.14),0 16px 48px rgba(0,0,0,0.5)}50%{box-shadow:0 0 0 1px rgba(180,53,53,0.45),0 0 90px rgba(180,53,53,0.3),0 16px 48px rgba(0,0,0,0.5)}}
+@keyframes bg-drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,20px)}}
+@keyframes bg-drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-25px,35px)}}
+
+/* ━━━━━━━━━━━━━━━ RESPONSIVE ━━━━━━━━━━━━━━━ */
+@media(max-width:960px){
+  .wiki-wrap{padding:0;}
+  .wiki-layout{grid-template-columns:1fr;}
+  .sidebar,.toc{display:none;}
+  .wiki-content{padding:22px 16px 48px;}
+  .mobile-wiki-nav{display:block;}
+}
+@media(max-width:768px){
+  nav{padding:0 16px;}
+  .nav-links,.nav-discord{display:none;}
+  .burger{display:flex;}
+  .mobile-drawer{display:flex;}
+  section{padding:48px 16px;}
+  .sep{padding:0 16px;}
+  .hero{padding:80px 16px 100px;}
+  .hero-logo{width:76px;height:76px;border-radius:18px;}
+  .hero-title{font-size:clamp(54px,15vw,100px);}
+  .hero-subtitle{font-size:13px;}
+  .hero-stats{flex-direction:column;gap:1px;width:100%;max-width:280px;}
+  .stat:first-child{border-radius:var(--radius) var(--radius) 0 0;border-right:1px solid var(--border);border-bottom:none;}
+  .stat:last-child{border-radius:0 0 var(--radius) var(--radius);}
+  .hero-cta{flex-direction:column;align-items:stretch;width:100%;max-width:280px;}
+  .btn{justify-content:center;}
+  .about-grid{grid-template-columns:1fr;}
+  .events-grid{grid-template-columns:1fr;}
+  .project-card{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+  .project-img{order:-1;}
+  .project-img::before{padding-top:52%;}
+  .project-body{padding:18px;}
+  .join-block{flex-direction:column;padding:22px 20px;}
+  .join-btns{flex-direction:column;width:100%;}
+  .join-btns .btn{justify-content:center;}
+  footer{padding:20px 16px;flex-direction:column;align-items:flex-start;gap:16px;}
+  .footer-links{flex-wrap:wrap;gap:12px;}
+  .status-bar{padding:5px 16px;gap:12px;}
+  .section-index{font-size:44px;}
+  .section-title{font-size:26px;}
+  .rm-page{padding:2rem 1rem 4rem;}
+  .rm-stats-row{flex-direction:column;gap:1px;}
+  .rm-step-header{flex-wrap:wrap;gap:6px;}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="bg-deco">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+  <div class="bg-ring bg-ring-1"></div>
+  <div class="bg-ring bg-ring-2"></div>
+  <div class="bg-diamond bg-diamond-1"></div>
+  <div class="bg-diamond bg-diamond-2"></div>
+</div>
+
+<nav>
+  <a class="nav-logo" data-page="home">
+    <img src="files/image/asa-logo-480.png" alt="Arasaka">
+    <span class="nav-logo-text">ARA<span class="r">SAKA</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a data-page="home" class="active">Главная</a></li>
+    <li><a data-page="wiki">Вики</a></li>
+    <li><a data-page="roadmap">Роудмапа</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="https://discord.gg/SpufupDBB4" class="nav-discord" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Discord
+    </a>
+    <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a data-page="home" class="active">Главная</a></li>
+    <li><a data-page="wiki">Вики</a></li>
+    <li><a data-page="roadmap">Роудмапа</a></li>
+  </ul>
+  <div class="mobile-drawer-sep"></div>
+  <a href="https://discord.gg/SpufupDBB4" class="mobile-drawer-discord" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Discord
+  </a>
+</div>
+
+<!-- ══════════════ HOME PAGE ══════════════ -->
+<div id="page-home" class="page-view active">
+
+<div class="hero">
+  <div class="hero-beams"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-content">
+    <img class="hero-logo" src="files/image/asa-logo-480.png" alt="Arasaka">
+    <div class="hero-tag">CLAN · DIVISION · UNIT</div>
+    <h1 class="hero-title"><span class="w">ARA</span><span class="r">SAKA</span></h1>
+    <p class="hero-subtitle">Клан с чёткой структурой, системой ролей и наград. Маскот — Белый тигр.</p>
+    <p class="hero-since">Активен с 28.12.2020</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-value">4+</div><div class="stat-label">Года активности</div></div>
+      <div class="stat"><div class="stat-value">35+</div><div class="stat-label">Участников</div></div>
+      <div class="stat"><div class="stat-value">ARC</div><div class="stat-label">Система наград</div></div>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" data-page="wiki" data-tab="intro">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Вики клана
+      </a>
+      <a href="https://discord.gg/SpufupDBB4" class="btn btn-secondary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Discord
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-index">01</span>
+    <div class="section-title-group">
+      <div class="section-label">О клане</div>
+      <h2 class="section-title">Кто мы</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-card"><span class="card-icon">⬡</span><h3 class="card-title">История</h3><p class="card-text">Клан основан 28 декабря 2020 года и продолжает активную деятельность по сей день. За это время сложилась стабильная структура и культура.</p></div>
+    <div class="about-card"><span class="card-icon">◈</span><h3 class="card-title">Структура</h3><p class="card-text">Чёткая иерархия ролей от Главы до новобранцев. Каждый участник знает свои права, обязанности и путь развития внутри клана.</p></div>
+    <div class="about-card"><span class="card-icon">▣</span><h3 class="card-title">Система ARC</h3><p class="card-text">Внутренняя валюта за заслуги. Баллы начисляются за вклад в клан и обмениваются на реальные привилегии — от звёзд Telegram до артов на заказ.</p></div>
+    <div class="about-card"><span class="card-icon">◼</span><h3 class="card-title">Discord-сервер</h3><p class="card-text">Основная площадка для общения, координации и новостей. Вступление через анкету в канале «Заявки» — ссылка на вступление ниже.</p></div>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="events">
+  <div class="section-header reveal">
+    <span class="section-index">02</span>
+    <div class="section-title-group">
+      <div class="section-label">Активность</div>
+      <h2 class="section-title">Ивенты</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="events-grid reveal" id="events-grid"><div class="events-loading">Загрузка ивентов...</div></div>
+  <div class="events-actions reveal">
+    <a class="btn btn-secondary" data-page="wiki" data-tab="ivent">Больше ивентов →</a>
+    <a class="btn btn-primary" data-page="wiki" data-tab="ivent">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Записаться на ивент
+    </a>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-index">03</span>
+    <div class="section-title-group">
+      <div class="section-label">Деятельность</div>
+      <h2 class="section-title">Проекты</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-list" id="projects-list"></div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="links">
+  <div class="section-header reveal">
+    <span class="section-index">04</span>
+    <div class="section-title-group">
+      <div class="section-label">Ссылки</div>
+      <h2 class="section-title">Навигация</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="quick-links reveal">
+    <a class="quick-link" data-page="wiki" data-tab="intro"><div class="quick-link-left"><span class="quick-link-icon">📋</span><div><div>Правила Discord</div><div class="quick-link-sub">Правила поведения на сервере клана</div></div></div><span class="quick-link-arrow">→</span></a>
+    <a class="quick-link" data-page="wiki" data-tab="rules-clan"><div class="quick-link-left"><span class="quick-link-icon">🏯</span><div><div>Устав клана</div><div class="quick-link-sub">Внутренние правила, склад, постройки, фермы</div></div></div><span class="quick-link-arrow">→</span></a>
+    <a class="quick-link" data-page="wiki" data-tab="roles"><div class="quick-link-left"><span class="quick-link-icon">🏷️</span><div><div>Роли и звания</div><div class="quick-link-sub">Иерархия и описание каждой роли</div></div></div><span class="quick-link-arrow">→</span></a>
+    <a class="quick-link" data-page="wiki" data-tab="arc"><div class="quick-link-left"><span class="quick-link-icon">⭐</span><div><div>Система ARC</div><div class="quick-link-sub">Баллы за заслуги и список наград</div></div></div><span class="quick-link-arrow">→</span></a>
+    <a class="quick-link" data-page="wiki" data-tab="join"><div class="quick-link-left"><span class="quick-link-icon">📝</span><div><div>Система вступления</div><div class="quick-link-sub">Голосование совета · испытательный срок</div></div></div><span class="quick-link-arrow">→</span></a>
+    <a class="quick-link" data-page="wiki" data-tab="birthdays"><div class="quick-link-left"><span class="quick-link-icon">🎂</span><div><div>Дни рождения</div><div class="quick-link-sub">Команды бота · поздравления в Discord</div></div></div><span class="quick-link-arrow">→</span></a>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="join">
+  <div class="section-header reveal">
+    <span class="section-index">05</span>
+    <div class="section-title-group">
+      <div class="section-label">Сообщество</div>
+      <h2 class="section-title">Вступление</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="join-block reveal">
+    <div>
+      <div class="join-title">Хочешь в клан?</div>
+      <div class="join-desc">Подай заявку в Discord. Совет проголосует — за, против или воздержался. После одобрения — испытательный срок 7–14 дней.</div>
+    </div>
+    <div class="join-btns">
+      <a href="https://discord.gg/SpufupDBB4" class="btn btn-primary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Войти на Discord
+      </a>
+      <a href="https://discord.com/channels/1183110103923175454/1399396140990070914" class="btn btn-secondary" target="_blank">Заявки →</a>
+    </div>
+  </div>
+</section>
+
+</div><!-- /page-home -->
+
+<!-- ══════════════ WIKI PAGE ══════════════ -->
+<div id="page-wiki" class="page-view">
+
+<div class="mobile-wiki-nav" id="mobile-wiki-nav">
+  <div class="mobile-wiki-nav-inner">
+    <button class="mobile-wiki-nav-btn" data-tab="intro">Введение</button>
+    <button class="mobile-wiki-nav-btn" data-tab="rules-discord">Discord</button>
+    <button class="mobile-wiki-nav-btn" data-tab="rules-clan">Устав</button>
+    <button class="mobile-wiki-nav-btn" data-tab="join">Вступление</button>
+    <button class="mobile-wiki-nav-btn" data-tab="roles">Роли</button>
+    <button class="mobile-wiki-nav-btn" data-tab="arc">ARC</button>
+    <button class="mobile-wiki-nav-btn" data-tab="roster">Состав</button>
+    <button class="mobile-wiki-nav-btn" data-tab="birthdays">ДР</button>
+    <button class="mobile-wiki-nav-btn" data-tab="ivent">Ивенты</button>
+  </div>
+</div>
+
+<div class="wiki-wrap"><div class="wiki-layout">
+<aside class="sidebar">
+  <div class="sb-group"><span class="sb-label">Вики</span><ul class="sb-links"><li><a class="sb-link" data-tab="intro">Введение</a></li></ul></div>
+  <div class="sb-group"><span class="sb-label">Правила</span><ul class="sb-links"><li><a class="sb-link" data-tab="rules-discord">Discord</a></li><li><a class="sb-link" data-tab="rules-clan">Клан</a></li></ul></div>
+  <div class="sb-group"><span class="sb-label">Структура</span><ul class="sb-links">
+    <li><a class="sb-link" data-tab="roles">Роли</a></li>
+    <li><a class="sb-link" data-tab="arc">ARC</a></li>
+    <li><a class="sb-link" data-tab="roster">Состав</a></li>
+    <li><a class="sb-link" data-tab="join">Система вступления <span class="sb-badge">new</span></a></li>
+    <li><a class="sb-link" data-tab="birthdays">Дни рождения <span class="sb-badge">new</span></a></li>
+  </ul></div>
+  <div class="sb-group"><span class="sb-label">Ивенты</span><ul class="sb-links"><li><a class="sb-link" data-tab="ivent">Запись на ивенты <span class="sb-badge">new</span></a></li></ul></div>
+</aside>
+
+<main class="wiki-content">
+  <div class="tab-pane" id="tab-intro">
+    <div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Введение</span></div>
+    <div class="md-body">
+      <h1>Введение</h1>
+      <div class="update-banner"><div class="update-icon">🐯</div><div class="update-text"><div class="update-label">Обновление клана</div><div class="update-desc">Новый маскот клана — <strong style="color:var(--white)">Белый тигр</strong>. Обновлено оформление Discord, переработана система ролей, добавлены новые разделы вики.</div></div></div>
+      <p>Добро пожаловать в вики клана Arasaka. Здесь собрана вся необходимая информация — правила, роли, система вступления, ARC, состав и ивенты.</p>
+      <div class="callout"><div class="callout-title">Впервые в клане?</div><p>Начните с правил Discord и устава клана. Затем ознакомьтесь с системой вступления и ролями.</p></div>
+      <h2>Навигация по вики</h2>
+      <div class="link-cards">
+        <div class="link-card" data-tab="rules-discord">📋 Правила Discord <span>→</span></div>
+        <div class="link-card" data-tab="rules-clan">🏯 Устав клана <span>→</span></div>
+        <div class="link-card new-card" data-tab="join">📝 Система вступления <span>→</span></div>
+        <div class="link-card new-card" data-tab="birthdays">🎂 Дни рождения <span>→</span></div>
+        <div class="link-card" data-tab="roles">🏷️ Роли и звания <span>→</span></div>
+        <div class="link-card" data-tab="arc">⭐ Система ARC <span>→</span></div>
+        <div class="link-card" data-tab="roster">👥 Состав клана <span>→</span></div>
+        <div class="link-card new-card" data-tab="ivent">🎮 Запись на ивенты <span>→</span></div>
+      </div>
+      <h2>О клане</h2>
+      <p>Arasaka — клан с организованной структурой, иерархией и системой поощрений. Маскот клана — Белый тигр. Основан 28 декабря 2020 года.</p>
+      <p>Вступление — через Discord-сервер. После подачи заявки проходит голосование Совета, затем испытательный срок от 7 до 14 дней.</p>
+      <p><a href="https://discord.gg/SpufupDBB4" target="_blank">→ Войти на Discord</a></p>
+    </div>
+  </div>
+  <div class="tab-pane" id="tab-rules-discord"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Правила Discord</span></div><div class="md-body loading" id="content-rules-discord">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-rules-clan"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Устав клана</span></div><div class="md-body loading" id="content-rules-clan">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-join"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Система вступления</span></div><div class="md-body loading" id="content-join">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-birthdays"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Дни рождения</span></div><div class="md-body loading" id="content-birthdays">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-roles"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Роли</span></div><div class="md-body loading" id="content-roles">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-arc"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>ARC</span></div><div class="md-body loading" id="content-arc">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-roster"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Состав</span></div><div class="md-body loading" id="content-roster">Загрузка...</div></div>
+  <div class="tab-pane" id="tab-ivent"><div class="breadcrumb"><a data-page="home">Arasaka</a> › <span>Запись на ивенты</span></div><div class="md-body loading" id="content-ivent">Загрузка...</div></div>
+</main>
+
+<aside class="toc">
+  <div class="toc-title">На этой странице</div>
+  <ul class="toc-list" id="toc-list"></ul>
+</aside>
+</div></div><!-- /wiki-layout /wiki-wrap -->
+
+</div><!-- /page-wiki -->
+
+<!-- ══════════════ ROADMAP PAGE ══════════════ -->
+<div id="page-roadmap" class="page-view">
+<div class="rm-page">
+  <div class="rm-section-label">РАЗВИТИЕ САЙТА</div>
+  <h1 class="rm-title">ROADMAP</h1>
+  <p class="rm-subtitle" id="rm-subtitle">Загрузка данных...</p>
+  <div class="rm-stats-row">
+    <div class="rm-stat-card"><div class="rm-stat-value green" id="rm-stat-done">—</div><div class="rm-stat-label">Готово</div></div>
+    <div class="rm-stat-card"><div class="rm-stat-value muted" id="rm-stat-left">—</div><div class="rm-stat-label">В работе</div></div>
+    <div class="rm-stat-card"><div class="rm-stat-value gold" id="rm-stat-total">—</div><div class="rm-stat-label">Всего этапов</div></div>
+  </div>
+  <div class="rm-progress-section">
+    <div class="rm-progress-header"><span class="rm-progress-title">Общий прогресс</span><span class="rm-progress-pct" id="rm-pct-label">0%</span></div>
+    <div class="rm-progress-track"><div class="rm-progress-fill" id="rm-progress-fill" style="width:0%"></div></div>
+    <div class="rm-segments-track" id="rm-segments-track"></div>
+  </div>
+  <div class="rm-timeline" id="rm-timeline">
+    <div class="rm-timeline-spine"><div class="rm-timeline-spine-fill" id="rm-spine-fill" style="height:0%"></div></div>
+  </div>
+</div>
+</div><!-- /page-roadmap -->
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="footer-logo"><img src="files/image/asa-logo-480.png" alt="Arasaka">ARA<span class="accent">SAKA</span></div>
+  <ul class="footer-links">
+    <li><a data-page="wiki" data-tab="intro">Вики</a></li>
+    <li><a data-page="wiki" data-tab="rules-discord">Правила</a></li>
+    <li><a href="https://discord.gg/SpufupDBB4" target="_blank">Discord</a></li>
+  </ul>
+  <div class="footer-copy">© ARASAKA CLAN · С 28.12.2020</div>
+</footer>
+
+<div class="status-bar">
+  <div class="status-item"><span class="status-dot"></span>АКТИВЕН</div>
+  <div class="status-sep"></div>
+  <div class="status-item">35+ УЧАСТНИКОВ</div>
+  <div class="status-sep"></div>
+  <div class="ticker"><span class="ticker-inner">〔 Вебе - раб маси 〕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;〔 блеб 〕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;〔 Новые разделы вики: Вступление и Дни рождений 〕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;〔 Главный проект: пока не анонсирован(но будет) 〕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;〔 discord.gg/SpufupDBB4 〕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+</div>
+
+<script>
+/* ══════════ ROUTER ══════════ */
+function showPage(pageId, tab) {
+  document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + pageId);
+  if (el) el.classList.add('active');
+
+  document.querySelectorAll('.nav-links a[data-page], .mobile-drawer ul a[data-page]').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === pageId);
+  });
+
+  if (pageId === 'wiki') {
+    initWiki();
+    showWikiTab(tab || 'intro');
+    window.scrollTo(0, 0);
+  } else if (pageId === 'roadmap') {
+    initRoadmap();
+    window.scrollTo(0, 0);
+  }
+
+  const hash = pageId === 'home' ? '' : (tab ? '#' + pageId + '/' + tab : '#' + pageId);
+  history.replaceState(null, '', location.pathname + hash);
+
+  closeBurger();
+}
+
+function parseAndRoute() {
+  const hash = location.hash.replace('#', '');
+  if (!hash) return showPage('home');
+  const parts = hash.split('/');
+  const page = parts[0];
+  const sub = parts.slice(1).join('/');
+  const wikiTabs = ['intro','rules-discord','rules-clan','join','birthdays','roles','arc','roster','ivent'];
+  if (page === 'wiki') return showPage('wiki', sub || 'intro');
+  if (page === 'roadmap') return showPage('roadmap');
+  if (wikiTabs.includes(page)) return showPage('wiki', page);
+  return showPage('home');
+}
+
+/* ══════════ GLOBAL CLICK DELEGATION ══════════ */
+document.addEventListener('click', e => {
+  // Nav / page links
+  const pageEl = e.target.closest('[data-page]');
+  if (pageEl && !pageEl.classList.contains('nav-discord') && !pageEl.closest('.mobile-drawer-discord')) {
+    e.preventDefault();
+    const page = pageEl.dataset.page;
+    const tab = pageEl.dataset.tab || null;
+    showPage(page, tab);
+    return;
+  }
+  // Wiki tab links (sidebar, link-cards, breadcrumbs)
+  const tabEl = e.target.closest('[data-tab]');
+  if (tabEl && !tabEl.dataset.page) {
+    e.preventDefault();
+    showWikiTab(tabEl.dataset.tab);
+    return;
+  }
+  // Mobile wiki nav
+  if (e.target.classList.contains('mobile-wiki-nav-btn')) {
+    showWikiTab(e.target.dataset.tab);
+    return;
+  }
+});
+
+/* ══════════ WIKI ══════════ */
+const MD_FILES = {
+  'rules-discord':'files/md/discord.md','rules-clan':'files/md/clan.md',
+  'join':'files/md/join.md','birthdays':'files/md/birthday.md',
+  'roles':'files/md/roles.md','arc':'files/md/arc.md',
+  'roster':'files/md/roster.md','ivent':'files/md/ivent.md'
+};
+const mdLoaded = {};
+let wikiInited = false;
+if (typeof marked !== 'undefined') marked.setOptions({ breaks: true, gfm: true });
+
+function initWiki() { wikiInited = true; }
+
+async function loadMD(tab) {
+  if (mdLoaded[tab] || !MD_FILES[tab]) return;
+  try {
+    const r = await fetch(MD_FILES[tab]);
+    if (!r.ok) throw new Error();
+    const text = await r.text();
+    const el = document.getElementById('content-' + tab);
+    if (el) {
+      el.classList.remove('loading');
+      el.innerHTML = typeof marked !== 'undefined' ? marked.parse(text) : text;
+      el.querySelectorAll('h2,h3').forEach(h => {
+        if (!h.id) h.id = h.textContent.trim().toLowerCase().replace(/[^а-яёa-z0-9]+/gi, '-').replace(/^-|-$/g,'');
+      });
+      mdLoaded[tab] = true;
+    }
+  } catch(_) {
+    const el = document.getElementById('content-' + tab);
+    if (el) el.innerHTML = '<p style="color:var(--gray-dim)">Не удалось загрузить файл.</p>';
+  }
+}
+
+function showWikiTab(tabId) {
+  document.querySelectorAll('#page-wiki .tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.mobile-wiki-nav-btn').forEach(b => b.classList.remove('active'));
+
+  const pane = document.getElementById('tab-' + tabId);
+  if (pane) pane.classList.add('active');
+  document.querySelectorAll('.sb-link[data-tab="' + tabId + '"]').forEach(a => a.classList.add('active'));
+  const mBtn = document.querySelector('.mobile-wiki-nav-btn[data-tab="' + tabId + '"]');
+  if (mBtn) { mBtn.classList.add('active'); mBtn.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' }); }
+
+  loadMD(tabId).then(() => buildTOC(tabId));
+  buildTOC(tabId);
+
+  const wikiEl = document.getElementById('page-wiki');
+  if (wikiEl) wikiEl.scrollTop = 0;
+
+  history.replaceState(null, '', location.pathname + '#wiki/' + tabId);
+}
+
+function buildTOC(tabId) {
+  const pane = document.getElementById('tab-' + tabId);
+  const list = document.getElementById('toc-list');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!pane) return;
+  pane.querySelectorAll('h2[id],h3[id]').forEach(h => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    a.addEventListener('click', e => { e.preventDefault(); h.scrollIntoView({ behavior:'smooth' }); });
+    li.appendChild(a); list.appendChild(li);
+  });
+}
+
+/* ══════════ ROADMAP ══════════ */
+let roadmapLoaded = false;
+let roadmapInited = false;
+
+async function initRoadmap() {
+  if (roadmapInited) return;
+  if (!roadmapLoaded) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'files/roadmap.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+    roadmapLoaded = true;
+  }
+  renderRoadmap();
+  roadmapInited = true;
+}
+
+function renderRoadmap() {
+  if (typeof ROADMAP === 'undefined') return;
+  const timeline = document.getElementById('rm-timeline');
+  const spineFill = document.getElementById('rm-spine-fill');
+  const progFill = document.getElementById('rm-progress-fill');
+  const pctLabel = document.getElementById('rm-pct-label');
+  const segTrack = document.getElementById('rm-segments-track');
+  const subtitle = document.getElementById('rm-subtitle');
+
+  const total = ROADMAP.length;
+  const done = ROADMAP.filter(s => s.done === 1).length;
+  const left = total - done;
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+  document.getElementById('rm-stat-done').textContent = done;
+  document.getElementById('rm-stat-left').textContent = left;
+  document.getElementById('rm-stat-total').textContent = total;
+  subtitle.textContent = done + ' из ' + total + ' этапов завершено · ' + left + ' остаётся';
+
+  ROADMAP.forEach(s => {
+    const seg = document.createElement('div');
+    seg.className = 'rm-seg' + (s.done ? ' done' : '');
+    segTrack.appendChild(seg);
+  });
+
+  ROADMAP.forEach((step, i) => {
+    const isDone = step.done === 1;
+    const isWip = !isDone && i === ROADMAP.findIndex(s => !s.done);
+    const badge = isDone
+      ? '<span class="rm-step-badge badge-done">ГОТОВО</span>'
+      : (isWip ? '<span class="rm-step-badge badge-wip">В РАБОТЕ</span>' : '<span class="rm-step-badge badge-pending">ОЖИДАЕТ</span>');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'rm-step' + (isDone ? ' done-step' : '');
+    wrapper.style.animationDelay = (i * 60) + 'ms';
+    wrapper.innerHTML = `
+      <div class="rm-step-dot-wrap"><div class="rm-step-dot${isDone ? ' done' : ''}"><div class="rm-step-dot-inner"></div></div></div>
+      <div class="rm-step-body"><div class="rm-step-header">
+        <span class="rm-step-index">${String(i+1).padStart(2,'0')}</span>
+        <span class="rm-step-name">${step.name}</span>
+        ${badge}
+      </div></div>`;
+    timeline.appendChild(wrapper);
+  });
+
+  setTimeout(() => {
+    progFill.style.width = pct + '%';
+    pctLabel.textContent = pct + '%';
+    const lastDone = ROADMAP.map(s => s.done).lastIndexOf(1);
+    if (lastDone >= 0) {
+      spineFill.style.height = Math.round(((lastDone + 0.5) / total) * 100) + '%';
+    }
+  }, 200);
+}
+
+/* ══════════ HOME — EVENTS ══════════ */
+async function loadEvents() {
+  const grid = document.getElementById('events-grid');
+  if (!grid) return;
+  const cards = [];
+  for (const id of [1, 2]) {
+    let title = '', desc = '', author = '', imgSrc = '';
+    try {
+      const r = await fetch('files/md/ivent_' + id + '.md');
+      if (r.ok) {
+        const lines = (await r.text()).trim().split('\n').filter(l => l.trim());
+        const tL = lines.find(l => /^(название|title)\s*:/i.test(l));
+        title = tL ? tL.replace(/^(название|title)\s*:\s*/i,'').trim() : '';
+        const aL = lines.find(l => /^(автор|author)\s*:/i.test(l));
+        author = aL ? aL.replace(/^(автор|author)\s*:\s*/i,'').trim() : '';
+        desc = lines.filter(l => l !== tL && l !== aL && !l.startsWith('#')).join(' ').trim();
+      }
+    } catch(_) {}
+    for (const ext of ['png','jpg','jpeg','webp']) {
+      try { const r = await fetch('files/image/ivent_' + id + '.' + ext, { method:'HEAD' }); if (r.ok) { imgSrc = 'files/image/ivent_' + id + '.' + ext; break; } } catch(_) {}
+    }
+    const card = document.createElement('div'); card.className = 'event-card';
+    const imgDiv = document.createElement('div'); imgDiv.className = 'event-img';
+    if (imgSrc) { const img = document.createElement('img'); img.src = imgSrc; img.alt = 'Ивент ' + id; imgDiv.appendChild(img); }
+    else { const ph = document.createElement('div'); ph.className = 'event-img-placeholder'; ph.textContent = 'Скрин: ivent_' + id + '.png'; imgDiv.appendChild(ph); }
+    const body = document.createElement('div'); body.className = 'event-body';
+    const tEl = document.createElement('div'); tEl.className = 'event-title'; tEl.textContent = title || 'Ивент #' + id;
+    const dEl = document.createElement('p'); dEl.className = 'event-desc'; dEl.textContent = desc || 'Описание в ivent_' + id + '.md';
+    const aEl = document.createElement('div'); aEl.className = 'event-author'; aEl.textContent = author || 'Автор не указан';
+    body.appendChild(tEl); body.appendChild(dEl); body.appendChild(aEl);
+    card.appendChild(imgDiv); card.appendChild(body); cards.push(card);
+  }
+  grid.innerHTML = ''; cards.forEach(c => grid.appendChild(c));
+}
+
+/* ══════════ HOME — PROJECTS ══════════ */
+async function loadProjects() {
+  const list = document.getElementById('projects-list');
+  if (!list) return;
+  let cfg;
+  try { const r = await fetch('files/projects.json?' + Date.now()); cfg = await r.json(); }
+  catch(_) { list.innerHTML = '<p style="color:var(--gray-dim);padding:20px;font-family:\'JetBrains Mono\',monospace;font-size:12px">Не удалось загрузить projects.json</p>'; return; }
+  const statuses = cfg.statuses || {};
+  for (const proj of cfg.projects) {
+    const id = proj.id;
+    const si = statuses[String(proj.status)] || { label:'Неизвестно', color:'#888' };
+    const card = document.createElement('div'); card.className = 'project-card reveal';
+    const body = document.createElement('div'); body.className = 'project-body';
+    const tag = document.createElement('div'); tag.className = 'project-tag'; tag.textContent = si.label; tag.style.color = si.color; tag.style.borderColor = si.color + '55';
+    const tEl = document.createElement('div'); tEl.className = 'project-title'; tEl.textContent = '...';
+    const dEl = document.createElement('p'); dEl.className = 'project-desc'; dEl.textContent = '...';
+    body.appendChild(tag); body.appendChild(tEl); body.appendChild(dEl);
+    const imgWrap = document.createElement('div'); imgWrap.className = 'project-img';
+    const imgLoader = document.createElement('div'); imgLoader.className = 'project-loading'; imgLoader.textContent = 'загрузка...';
+    imgWrap.appendChild(imgLoader); card.appendChild(body); card.appendChild(imgWrap); list.appendChild(card);
+    fetch('files/md/' + id + '.md?' + Date.now()).then(r => r.ok ? r.text() : null).then(md => {
+      if (!md) { tEl.textContent = 'Проект ' + id; dEl.textContent = 'Добавьте ' + id + '.md'; return; }
+      const lines = md.trim().split('\n');
+      tEl.textContent = (lines.find(l => l.startsWith('# ')) || '').replace(/^# /,'') || 'Проект ' + id;
+      dEl.textContent = lines.filter(l => l.trim() && !l.startsWith('#')).slice(0,3).join(' ').trim() || '—';
+    }).catch(() => { tEl.textContent = 'Проект ' + id; });
+    for (const ext of ['png','jpg','jpeg','webp']) {
+      try {
+        const r = await fetch('files/image/' + id + '.' + ext, { method:'HEAD' });
+        if (r.ok) { const img = document.createElement('img'); img.src = 'files/image/' + id + '.' + ext; img.alt = id; img.onload = () => imgLoader.remove(); imgWrap.appendChild(img); break; }
+      } catch(_) {}
+    }
+    if (!imgWrap.querySelector('img')) { imgLoader.remove(); const ph = document.createElement('div'); ph.className = 'project-img-placeholder'; ph.textContent = 'Фото: ' + id + '.png'; imgWrap.appendChild(ph); }
+    requestAnimationFrame(() => setTimeout(() => card.classList.add('visible'), 100));
+  }
+}
+
+/* ══════════ REVEAL OBSERVER ══════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 60); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ══════════ SCROLL ACTIVE NAV (home) ══════════ */
+const homeSections = document.querySelectorAll('#page-home section[id]');
+window.addEventListener('scroll', () => {
+  if (!document.getElementById('page-home').classList.contains('active')) return;
+  let cur = '';
+  homeSections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+});
+
+/* ══════════ BURGER ══════════ */
+function closeBurger() {
+  document.getElementById('burger').classList.remove('open');
+  document.getElementById('mobile-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('burger').addEventListener('click', () => {
+  const open = document.getElementById('burger').classList.toggle('open');
+  document.getElementById('mobile-drawer').classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+/* ══════════ INIT ══════════ */
+parseAndRoute();
+loadEvents();
+loadProjects();
+</script>
+</body>
+</html>
