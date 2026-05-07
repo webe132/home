@@ -1308,7 +1308,8 @@ async function loadProjects() {
     const tag = document.createElement('div'); tag.className = 'project-tag'; tag.textContent = si.label; tag.style.color = si.color; tag.style.borderColor = si.color + '55';
     const tEl = document.createElement('div'); tEl.className = 'project-title'; tEl.textContent = '...';
     const dEl = document.createElement('p'); dEl.className = 'project-desc'; dEl.textContent = '...';
-    body.appendChild(tag); body.appendChild(tEl); body.appendChild(dEl);
+    const btnMore = document.createElement('a'); btnMore.className = 'btn btn-secondary'; btnMore.setAttribute('data-page', '204'); btnMore.textContent = 'Подробнее →';
+    body.appendChild(tag); body.appendChild(tEl); body.appendChild(dEl); body.appendChild(btnMore);
     const imgWrap = document.createElement('div'); imgWrap.className = 'project-img';
     const imgLoader = document.createElement('div'); imgLoader.className = 'project-loading'; imgLoader.textContent = 'загрузка...';
     imgWrap.appendChild(imgLoader); card.appendChild(body); card.appendChild(imgWrap); list.appendChild(card);
