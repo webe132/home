@@ -207,6 +207,23 @@ section{position:relative;z-index:1;padding:72px 48px;max-width:1100px;margin:0 
 .form-field-item::before{content:'· ';color:var(--gray-dim);}
 @media(max-width:960px){.vacancy-modal-body{grid-template-columns:1fr;}.vacancy-form-col{border-left:none;padding-left:0;border-top:1px solid var(--border);padding-top:18px;}}
 @media(max-width:768px){.vacancies-grid{grid-template-columns:1fr;}.vacancy-tile{aspect-ratio:auto;}.vacancy-modal-body{padding:18px;}.vacancy-modal-head{padding:16px 18px;}}
+.farms-modal-body{padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
+.farms-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.farms-stats{display:flex;gap:8px;flex-wrap:wrap;}
+.farms-stat{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;padding:4px 10px;border-radius:5px;border:1px solid;}
+.farms-stat.has{color:#4caf6e;border-color:rgba(76,175,110,0.35);background:rgba(76,175,110,0.06);}
+.farms-stat.no{color:#e05555;border-color:rgba(224,85,85,0.35);background:rgba(224,85,85,0.06);}
+.farms-stat.plan{color:var(--gray-dim);border-color:var(--border);}
+.farms-authors{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.farms-author-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-right:4px;}
+.farms-author{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;padding:4px 10px;border-radius:5px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--gray);}
+.farms-list-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px;}
+.fi{font-size:12.5px;line-height:1.6;padding:4px 0 4px 28px;position:relative;border-bottom:1px solid rgba(255,255,255,0.03);}
+.fi-num{position:absolute;left:0;color:var(--gray-dim);font-family:'JetBrains Mono',monospace;font-size:10px;top:5px;min-width:22px;}
+.fi-yes{color:var(--gray);}
+.fi-no{color:#e05555;}
+.fi-plan{color:var(--gray-dim);font-style:italic;}
+@media(max-width:600px){.farms-list-grid{grid-template-columns:1fr;}.farms-modal-body{padding:16px 18px;}}
 
 .join-block{background:var(--panel);border:1px solid var(--border-red);border-radius:var(--radius-lg);padding:32px 36px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;}
 .join-block::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle at 100% 0%,rgba(180,53,53,0.1) 0%,transparent 65%);pointer-events:none;}
@@ -1009,6 +1026,84 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
   </div>
 </div>
 
+<div id="farms-modal" class="vacancy-modal" onclick="if(event.target===this)closeFarmsModal()">
+  <div class="vacancy-modal-box">
+    <div class="vacancy-modal-head">
+      <div class="vacancy-modal-title">Комплекс ферм клана</div>
+      <button class="vacancy-modal-close" onclick="closeFarmsModal()">✕ Закрыть</button>
+    </div>
+    <div class="farms-modal-body">
+      <div class="farms-top">
+        <div class="farms-stats">
+          <span class="farms-stat has">✅ Есть: 45</span>
+          <span class="farms-stat no">❌ Нету: 4</span>
+          <span class="farms-stat plan">Планируется: 3</span>
+        </div>
+        <div class="farms-authors">
+          <span class="farms-author-label">Авторы</span>
+          <span class="farms-author">qventx</span>
+          <span class="farms-author">tapOk</span>
+          <span class="farms-author">sen9</span>
+        </div>
+      </div>
+      <div class="farms-list-grid">
+        <div class="fi fi-yes"><span class="fi-num">1.</span>Дерево 7 видов</div>
+        <div class="fi fi-yes"><span class="fi-num">2.</span>Ферма мангры</div>
+        <div class="fi fi-plan"><span class="fi-num">3.</span>Ферма ели</div>
+        <div class="fi fi-yes"><span class="fi-num">4.</span>Ферма меда и сот</div>
+        <div class="fi fi-yes"><span class="fi-num">5.</span>Ферма булыжика</div>
+        <div class="fi fi-yes"><span class="fi-num">6.</span>Ферма костной муки</div>
+        <div class="fi fi-yes"><span class="fi-num">7.</span>Ферма слизи</div>
+        <div class="fi fi-yes"><span class="fi-num">8.</span>Ферма тростника</div>
+        <div class="fi fi-yes"><span class="fi-num">9.</span>Ферма тыкв и арбузов</div>
+        <div class="fi fi-yes"><span class="fi-num">10.</span>Ферма железа</div>
+        <div class="fi fi-yes"><span class="fi-num">11.</span>Ферма пороха</div>
+        <div class="fi fi-yes"><span class="fi-num">12.</span>Ферма обсидиана</div>
+        <div class="fi fi-yes"><span class="fi-num">13.</span>Ферма золота</div>
+        <div class="fi fi-yes"><span class="fi-num">15.</span>Ферма рейдов</div>
+        <div class="fi fi-yes"><span class="fi-num">16.</span>Ферма земли и грязи</div>
+        <div class="fi fi-yes"><span class="fi-num">17.</span>Трейдхолл пиглинов</div>
+        <div class="fi fi-yes"><span class="fi-num">18.</span>Ферма призмарина</div>
+        <div class="fi fi-no"><span class="fi-num">19.</span>Ферма визеров</div>
+        <div class="fi fi-no"><span class="fi-num">20.</span>Ферма враждебных мобов</div>
+        <div class="fi fi-yes"><span class="fi-num">21.</span>Ферма блейзов</div>
+        <div class="fi fi-yes"><span class="fi-num">22.</span>ПОЖИРАТЕЛЬ (карьер)</div>
+        <div class="fi fi-yes"><span class="fi-num">23.</span>Ферма еды</div>
+        <div class="fi fi-yes"><span class="fi-num">24.</span>Трейдхолл жителей</div>
+        <div class="fi fi-yes"><span class="fi-num">25.</span>Ферма шалкеров</div>
+        <div class="fi fi-yes"><span class="fi-num">26.</span>Дюпалка сыпучих блоков</div>
+        <div class="fi fi-yes"><span class="fi-num">27.</span>Ферма пластинов</div>
+        <div class="fi fi-yes"><span class="fi-num">28.</span>Ферма опыта</div>
+        <div class="fi fi-yes"><span class="fi-num">29.</span>Ферма адского дерева и грибосветов</div>
+        <div class="fi fi-yes"><span class="fi-num">30.</span>Ферма трезубцев</div>
+        <div class="fi fi-yes"><span class="fi-num">31.</span>Ферма коралов</div>
+        <div class="fi fi-no"><span class="fi-num">32.</span>Ферма капельников</div>
+        <div class="fi fi-no"><span class="fi-num">33.</span>Ферма ламинарий</div>
+        <div class="fi fi-yes"><span class="fi-num">34.</span>Ферма жабосветов</div>
+        <div class="fi fi-plan"><span class="fi-num">35.</span>Ферма льда</div>
+        <div class="fi fi-yes"><span class="fi-num">36.</span>Печка</div>
+        <div class="fi fi-yes"><span class="fi-num">37.</span>Ферма базальта</div>
+        <div class="fi fi-yes"><span class="fi-num">38.</span>Ферма мха</div>
+        <div class="fi fi-yes"><span class="fi-num">39.</span>Ферма красителей</div>
+        <div class="fi fi-yes"><span class="fi-num">40.</span>Ферма кактусов</div>
+        <div class="fi fi-yes"><span class="fi-num">41.</span>Ферма гастов</div>
+        <div class="fi fi-plan"><span class="fi-num">42.</span>Ферма хоглинов</div>
+        <div class="fi fi-yes"><span class="fi-num">43.</span>Ферма шерсти</div>
+        <div class="fi fi-yes"><span class="fi-num">44.</span>Ферма смолы</div>
+        <div class="fi fi-yes"><span class="fi-num">45.</span>Ферма темного и бледного дуба</div>
+        <div class="fi fi-yes"><span class="fi-num">46.</span>Ферма хорусов</div>
+        <div class="fi fi-yes"><span class="fi-num">47.</span>Ферма аметистов</div>
+        <div class="fi fi-yes"><span class="fi-num">48.</span>Ферма грибов</div>
+        <div class="fi fi-yes"><span class="fi-num">49.</span>Ферма ульев с пчелами</div>
+        <div class="fi fi-yes"><span class="fi-num">50.</span>Ферма дурного знамения</div>
+        <div class="fi fi-yes"><span class="fi-num">51.</span>Ферма снега</div>
+        <div class="fi fi-yes"><span class="fi-num">52.</span>Автокрафтер</div>
+        <div class="fi fi-yes"><span class="fi-num">53.</span>Ферма бамбука</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="vacancy-modal" class="vacancy-modal" onclick="if(event.target===this)closeVacancy()">
   <div class="vacancy-modal-box">
     <div class="vacancy-modal-head">
@@ -1050,7 +1145,9 @@ function closeVacancy() {
   document.getElementById('vacancy-modal').classList.remove('open');
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVacancy(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVacancy(); closeFarmsModal(); } });
+function openFarmsModal() { document.getElementById('farms-modal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeFarmsModal() { document.getElementById('farms-modal').classList.remove('open'); document.body.style.overflow = ''; }
 
 function showPage(pageId, tab) {
   document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
@@ -1308,7 +1405,8 @@ async function loadProjects() {
     const tag = document.createElement('div'); tag.className = 'project-tag'; tag.textContent = si.label; tag.style.color = si.color; tag.style.borderColor = si.color + '55';
     const tEl = document.createElement('div'); tEl.className = 'project-title'; tEl.textContent = '...';
     const dEl = document.createElement('p'); dEl.className = 'project-desc'; dEl.textContent = '...';
-    const btnMore = document.createElement('a'); btnMore.className = 'btn btn-secondary'; btnMore.setAttribute('data-page', '204'); btnMore.textContent = 'Подробнее →';
+    const btnMore = document.createElement('a'); btnMore.className = 'btn btn-secondary'; btnMore.textContent = 'Подробнее →';
+    if (id === 3) { btnMore.href = '#'; btnMore.addEventListener('click', e => { e.preventDefault(); openFarmsModal(); }); } else { btnMore.setAttribute('data-page', '204'); }
     body.appendChild(tag); body.appendChild(tEl); body.appendChild(dEl); body.appendChild(btnMore);
     const imgWrap = document.createElement('div'); imgWrap.className = 'project-img';
     const imgLoader = document.createElement('div'); imgLoader.className = 'project-loading'; imgLoader.textContent = 'загрузка...';
