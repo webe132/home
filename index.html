@@ -387,6 +387,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 .footer-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--gray-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;cursor:pointer;}
 .footer-links a:hover{color:var(--gray);}
 .footer-copy{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gray-dim);}
+.footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.footer-beta{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-dim);text-decoration:none;border:1px solid var(--border);padding:5px 12px;border-radius:var(--radius);transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.footer-beta:hover{color:var(--white);border-color:var(--gray-dim);}
 .status-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(10,10,10,0.92);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;align-items:center;gap:20px;padding:5px 48px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.1em;color:var(--gray-dim);}
 .status-dot{width:6px;height:6px;border-radius:50%;background:#4caf50;display:inline-block;margin-right:5px;box-shadow:0 0 7px #4caf50;animation:pulse 2.5s ease-in-out infinite;}
 .status-item{display:flex;align-items:center;gap:3px;}
@@ -1121,7 +1124,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
     <li><a data-page="wiki" data-tab="rules-discord">Правила</a></li>
     <li><a href="https://discord.gg/SpufupDBB4" target="_blank">Discord</a></li>
   </ul>
-  <div class="footer-copy">© ARASAKA CLAN · С 28.12.2020</div>
+  <div class="footer-right">
+    <a class="footer-beta" href="index_beta.html">Beta version →</a>
+    <div class="footer-copy">© ARASAKA CLAN · С 28.12.2020</div>
+  </div>
 </footer>
 
 <div class="status-bar">
